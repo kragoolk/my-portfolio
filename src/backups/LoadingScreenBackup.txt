@@ -1,0 +1,211 @@
+// src/components/LoadingScreen.jsx
+import React, { useEffect, useState, useRef } from "react";
+import { useProgress } from "@react-three/drei";
+
+/**
+ * LoadingScreen
+ *
+ * Props:
+ * - onEnter(): called when user clicks "Ready?" (overlay will be removed by parent)
+ * - duration (ms): how long the progress bar visually takes (default 5000)
+ */
+export default function LoadingScreen({ onEnter, duration = 2000 }) {
+  const { loaded, total } = useProgress(); // real loader progress
+  const [simProgress, setSimProgress] = useState(0); // 0..100 simulated timed progress
+  const rafRef = useRef();
+  const startRef = useRef();
+
+  // animate the simulated progress to reach 100% in `duration` ms
+  useEffect(() => {
+    startRef.current = performance.now();
+    const tick = (now) => {
+      const dt = now - startRef.current;
+      const pct = Math.min(100, (dt / duration) * 100);
+      setSimProgress(pct);
+      if (pct < 100) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [duration]);
+
+  // treat "no tracked assets" as already loaded so the overlay won't wait forever
+  const assetsLoaded = total === 0 ? true : loaded >= total;
+  const timerDone = simProgress >= 99.999;
+  const readyToShowControls = assetsLoaded && timerDone;
+
+  // display progress number to user (rounded)
+  const displayPct = Math.round(simProgress);
+ 
+  return (
+    <div className="loader-overlay" role="dialog" aria-modal="true" aria-label="Loading welcome screen">
+      {/* Inline styles block — drop-in, no extra CSS file needed */}
+      <style>{`
+        .loader-overlay{
+          position:fixed;
+          inset:0;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          z-index:9999;
+          background: linear-gradient(180deg,#ffffff 0%, #f1fbf7 100%);
+          -webkit-font-smoothing:antialiased;
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        .loader-card {
+          width:min(760px, 92vw);
+          padding: 28px;
+          border-radius:12px;
+          text-align:center;
+          background: rgba(255,255,255,0.85);
+          box-shadow: 0 20px 60px rgba(6,10,10,0.12);
+          backdrop-filter: blur(8px);
+          pointer-events: auto;
+        }
+
+        /* neon wireframe sphere (CSS rings) */
+        .sphere {
+          width: 110px;
+          height: 110px;
+          margin: 0 auto 20px;
+          position: relative;
+          transform-style: preserve-3d;
+        } 
+        .ring {
+          position:absolute;
+          inset:0;
+          border-radius:50%;
+          box-sizing:border-box;
+          border: 2px solid rgba(40,161,252,1);
+          filter: drop-shadow(0 8px 30px rgba(57,255,20,0.14));
+          background: radial-gradient(circle at 30% 20%, rgba(57,255,20,0.02), transparent 10%);
+        }
+        .ring.r1 { transform: rotateX(45deg); animation: spinX 6s linear infinite; }
+        .ring.r2 { transform: rotateY(65deg); animation: spinY 5s linear infinite reverse; }
+        .ring.r3 { transform: rotateZ(90deg); animation: spinZ 4.3s linear infinite; opacity:0.95; }
+
+        @keyframes spinX { from { transform: rotateX(0deg); } to { transform: rotateX(360deg); } }
+        @keyframes spinY { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        @keyframes spinZ { from { transform: rotateZ(0deg); } to { transform: rotateZ(360deg); } }
+
+        /* thin wire detail */
+        .ring::after {
+          content: "";
+          position:absolute;
+          inset:6%;
+          border-radius:90%;
+          border: 1px dashed rgba(125,175,20,0.18);
+        }
+
+        /* progress bar */
+        .progress-wrap{
+          width: min(640px, 86%);
+          margin: 10px auto 8px;
+          height:10px;
+          background: rgba(0,0,0,0.06);
+          border-radius: 999px;
+          overflow: hidden;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+        }
+        .progress-fill{
+          height:100%;
+          width:0%;
+          background: linear-gradient(90deg, rgba(125,175,255,1), rgba(0,46,120,0.95));
+          transition: width 120ms linear;
+          box-shadow: 0 6px 18px rgba(57,255,20,0.08);
+        }
+
+        .loading-text {
+          margin-top:8px;
+          font-weight:450;
+          color:#212121; /* 0b1220 black-ish per your request */
+        }
+
+        .instructions {
+          margin-top:16px;
+          color:#0b1220;
+          font-size:0.95rem;
+          text-align:left;
+          line-height:1.45;
+          max-width:640px;
+          margin-left:auto;
+          margin-right:auto;
+        }
+        .actions {
+          margin-top:20px;
+          display:flex;
+          gap:12px;
+          justify-content:center;
+        }
+        .btn-ready {
+          border-radius:10px;
+          padding:10px 18px;
+          border:2px solid rgba(40,161,252,0.98);
+          background: linear-gradient(180deg, rgba(57,255,20,0.06), rgba(57,255,20,0.02));
+          color:#081018;
+          font-weight:700;
+          cursor:pointer;
+          box-shadow: 0 8px 30px rgba(6,10,10,0.08);
+        }
+        .btn-ready:focus { outline: 3px solid rgba(57,255,20,0.18); }
+
+        .small-muted { color:#556064; margin-top:6px; font-size:0.88rem;}
+      `}</style>
+
+      <div className="loader-card" role="document">
+        <div style={{ marginBottom: 18 }}>
+          <h2 style={{ margin: 0, fontSize: "1.35rem", color: "#081018" }}>Welcome</h2>
+          <div className="small-muted">Preparing portfolio</div>
+        </div>
+
+        <div className="sphere" aria-hidden>
+          <div className="ring r1" />
+          <div className="ring r2" />
+          <div className="ring r3" />
+        </div>
+
+        <div className="progress-wrap" aria-hidden>
+          <div
+            className="progress-fill"
+            style={{ width: `${displayPct}%` }}
+            data-pct={displayPct}
+          />
+        </div>
+
+        <div className="loading-text">Loading... {displayPct}%</div>
+
+        {/* once timer AND assets loaded, show instructions + Ready */}
+        {readyToShowControls ? (
+          <>
+            <div className="instructions" style={{ marginTop: 16 }}>
+              <strong>Getting around</strong>
+              <p style={{ marginTop: 6 }}>
+                Use <i>WASD</i> to move, mouse to look around. Click on
+                objects to interact with them, and the dot shows where you're pointing!
+              </p>
+              <p style={{ marginTop: 8 }}>
+                <strong>Tip:</strong> Use <i>Q&E</i> to move up/down <strong>:)</strong>
+              </p>
+            </div>
+
+            <div className="actions">
+              <button
+                className="btn-ready"
+                onClick={() => onEnter && onEnter()}
+                onKeyDown={(e) => { if (e.key === "Enter") onEnter && onEnter(); }}
+              >
+                Ready?
+              </button>
+            </div>
+          </>
+        ) : (
+          <div style={{ marginTop: 12 }} className="small-muted">
+            This screen will transition when assets are ready and the loader completes.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
