@@ -10,7 +10,7 @@ import FloatingPaper from "./components/FloatingPaper"
 import CrosshairOverlay from "./components/CrosshairOverlay"
 import { FloatingSphere, FloatingPoly } from "./components/FloatingObjects"
 import ClickHandler from "./components/Raycasting"
-import GradientBackground from "./components/GradientBackground"
+//import GradientBackground from "./components/GradientBackground"
 import CustomPointerControls from "./components/CustomPointerControls"
 import TorusKnotHDR from './components/TorusKnotHDR'
 import ActionButton from './components/ActionButton'
@@ -41,15 +41,6 @@ export default function Experience() {
         position={[0, 10, 0]}
         intensity={1.5}
       /> 
-      
-      <TorusKnotHDR
-	hdrPath={hdriUrl}          // <-- your existing HDR file
-	exposure={1.0}
-	roughness={0.0}
-	metalness={1.0}
-	position={[0, 2.7, 0.5]}
-	scale={2.5}
-      />	
 
         <MorphingTorusKnotHDR
 	  hdrPath={hdriUrl}

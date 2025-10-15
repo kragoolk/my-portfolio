@@ -2,7 +2,7 @@ import { useThree, useFrame } from "@react-three/fiber"
 import { useRef, useEffect } from "react"
 import * as THREE from "three"
 
-export default function FloatingCameraControls({ speed = 0.9 }) {
+export default function FloatingCameraControls({ speed = 0.5 }) {
   const { camera, gl } = useThree()
   const keys = useRef({})
 
