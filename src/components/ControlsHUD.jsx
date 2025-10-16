@@ -21,7 +21,7 @@ export default function ControlsHUD() {
           position: 'fixed',
           top: '20px',
           right: '20px',
-          color: 'rgba(255, 255, 255, 0.7)',
+          color: 'rgba(0, 0, 0, 255)',
           fontSize: '14px',
           fontFamily: 'monospace',
           pointerEvents: 'none',
@@ -29,10 +29,10 @@ export default function ControlsHUD() {
         }}
       >
         Press <kbd style={{ 
-          background: 'rgba(255, 255, 255, 0.1)', 
+          background: 'rgba(0, 0, 0, 0.1)', 
           padding: '2px 6px', 
           borderRadius: '3px',
-          border: '1px solid rgba(255, 255, 255, 0.3)'
+          border: '1px solid rgba(0, 0, 0,255)'
         }}>H</kbd> for help
       </div>
 

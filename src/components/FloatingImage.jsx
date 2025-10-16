@@ -65,7 +65,7 @@ export default function FloatingImage({
     const t = state.clock.getElapsedTime() + phase.current;
     if (!group.current) return;
 
-    const bob = Math.sin(t * 0.6 + phase.current) * 0.08;
+    const bob = Math.sin(t * 0.3 + phase.current) * 0.03;
     const targetPos = basePos.current.clone();
     targetPos.y += bob;
 
@@ -81,7 +81,7 @@ export default function FloatingImage({
     const curS = group.current.scale.x || 1;
     group.current.scale.setScalar(curS + (desiredScale - curS) * 0.12);
 
-    const yawAngle = Math.sin(t * 3 + phase.current) * 0.01;
+    const yawAngle = Math.sin(t * 2 + phase.current) * 0.01;
     const baseQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(...rotation));
     const qOffset = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yawAngle);
     const targetQuat = baseQuat.multiply(qOffset);
@@ -97,10 +97,10 @@ export default function FloatingImage({
           emissive={"#ffffff"}
           emissiveIntensity={0.01}
           transparent={false}
-          opacity={0.98}
+          opacity={1}
           roughness={0}
-          metalness={0.03}
-          envMapIntensity={2}
+          metalness={0.8}
+          envMapIntensity={3}
         />
       </mesh>
 

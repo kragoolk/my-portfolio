@@ -89,7 +89,7 @@ export default function ActionButton({
           envMap={scene.environment}
           envMapIntensity={1.45}
           transparent
-          opacity={0.29}
+          opacity={0.5}
           transmission={0.88}
           clearcoat={0.7}
           clearcoatRoughness={0.25}

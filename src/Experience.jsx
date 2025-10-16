@@ -36,7 +36,7 @@ export default function Experience() {
       <ambientLight intensity={1.5} />
       <directionalLight
         position={[0, 10, 0]}
-        intensity={1.3}
+        intensity={1.0}
       /> 
 
         <MorphingTorusKnotHDR
@@ -146,7 +146,7 @@ export default function Experience() {
 	    resolution={1024}        // Resolution of the reflection render buffer
 	    mirror={1}               // 0 = texture colors, 1 = environment map colors
 	    depthScale={0.01}        // Depth factor scale of the reflection distortion
-	    minDepthThreshold={0.8}  // Lower edge threshold to depth blur interpolation
+	    minDepthThreshold={0.5}  // Lower edge threshold to depth blur interpolation
 	    maxDepthThreshold={1}    // Upper edge threshold to depth blur interpolation
 	    color="#a4c1db"          // Base color of the plane
 	    metalness={0.5}
