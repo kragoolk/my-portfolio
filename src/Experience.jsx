@@ -66,7 +66,7 @@ export default function Experience() {
                 position={[9, 1.6, -14]} size={4} rotation={[0, -Math.PI / 4, 0]} />
 
         {/* Top Row L-R */}
-        <FloatingVideo id="sore_htx" url="/media/videos/SORE_HTX.mp4"
+        <FloatingVideo id="sore_htx" url="/media/videos/SORE_HTX_web.mp4"
                 position={[-9, 6, -14]} size={3.5} rotation={[0, Math.PI / 4, 0]} />
         <FloatingImage id="underwater" url="/media/images/Underwater.jpg"
                 position={[-3.33, 6, -17.5]} size={4} rotation={[0, Math.PI / 9, 0]} />
