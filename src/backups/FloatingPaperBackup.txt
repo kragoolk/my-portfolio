@@ -1,11 +1,13 @@
-import React, { useRef, useState } from "react";
+// src/components/FloatingPaper.jsx
+import React, { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Html, useTexture, Text } from "@react-three/drei";
 import ImageContents from "./ImageContents";
+import { useSelection } from './SelectionContext';
 
 export default function FloatingPaper({
-  url,       // cover image url
+  url,
   id = null,
   pdfUrl = null,
   webUrl = null,
@@ -20,6 +22,7 @@ export default function FloatingPaper({
   const buttonRef = useRef();
   const texture = useTexture(url);
   const { camera } = useThree();
+  const { select, isSelected } = useSelection();
 
   const img = texture?.image;
   const aspect = img && img.width && img.height ? img.width / img.height : 1;
@@ -27,24 +30,33 @@ export default function FloatingPaper({
   const width = size * aspect;
   const depth = Math.max(0.02, Math.min(0.12, Math.max(width, height) * 0.02));
 
-  const [expanded, setExpanded] = useState(false);
   const basePos = useRef(new THREE.Vector3(...position));
 
   const deriveId = () => {
     if (id) return id;
     try {
       const fname = url.split("/").pop();
-      return fname ? fname.split(".")[0] : "default";
+      return fname ? fname.split(".")[0] : url;
     } catch {
-      return "default";
+      return url;
     }
   };
-  const contentKey = deriveId();
+  const uniqueId = deriveId();
+  const contentKey = id || deriveId();
   const content = ImageContents[contentKey] || ImageContents.default;
+
+  const expanded = isSelected(uniqueId);
+
+  useEffect(() => {
+    if (group.current) {
+      group.current.userData.id = uniqueId;
+      group.current.userData.type = 'paper';
+    }
+  }, [uniqueId]);
 
   const handleClick = (e) => {
     e.stopPropagation && e.stopPropagation();
-    setExpanded((s) => !s);
+    select(uniqueId);
   };
 
   const openExternal = (e) => {
@@ -81,7 +93,6 @@ export default function FloatingPaper({
     const qOffset = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yawAngle);
     const targetQuat = baseQuat.multiply(qOffset);
     group.current.quaternion.slerp(targetQuat, 0.12);
-
   });
 
   return (
@@ -94,7 +105,6 @@ export default function FloatingPaper({
         anchorY="middle"
         maxWidth={width * 1}
       >
-      
       </Text>
 
       <mesh ref={front} position={[0, 0, depth / 1.80]} onClick={handleClick}>

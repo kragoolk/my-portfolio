@@ -1,10 +1,9 @@
-// src/components/FloatingPaper.jsx
 import React, { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Html, useTexture, Text } from "@react-three/drei";
 import ImageContents from "./ImageContents";
-import { useSelection } from './SelectionContext';
+import { useSelection } from "./SelectionContext";
 
 export default function FloatingPaper({
   url,
@@ -20,10 +19,10 @@ export default function FloatingPaper({
   const back = useRef();
   const edge = useRef();
   const buttonRef = useRef();
-  const texture = useTexture(url);
   const { camera } = useThree();
   const { select, isSelected } = useSelection();
 
+  const texture = useTexture(url);
   const img = texture?.image;
   const aspect = img && img.width && img.height ? img.width / img.height : 1;
   const height = size;
@@ -47,10 +46,13 @@ export default function FloatingPaper({
 
   const expanded = isSelected(uniqueId);
 
+  // State for displaying the 3D confirmation prompt
+  const [confirming, setConfirming] = useState(false);
+
   useEffect(() => {
     if (group.current) {
       group.current.userData.id = uniqueId;
-      group.current.userData.type = 'paper';
+      group.current.userData.type = "paper";
     }
   }, [uniqueId]);
 
@@ -59,13 +61,24 @@ export default function FloatingPaper({
     select(uniqueId);
   };
 
-  const openExternal = (e) => {
+  const handleOpenClick = (e) => {
     e.stopPropagation && e.stopPropagation();
+    setConfirming(true);
+  };
+
+  const handleConfirmYes = (e) => {
+    e.stopPropagation && e.stopPropagation();
+    setConfirming(false);
     if (webUrl) {
       window.open(webUrl, "_blank");
     } else if (pdfUrl) {
       window.open(pdfUrl, "_blank");
     }
+  };
+
+  const handleConfirmNo = (e) => {
+    e.stopPropagation && e.stopPropagation();
+    setConfirming(false);
   };
 
   useFrame((state) => {
@@ -89,25 +102,21 @@ export default function FloatingPaper({
     group.current.scale.setScalar(curS + (desiredScale - curS) * 0.12);
 
     const yawAngle = Math.sin(t * 5) * 0.01;
-    const baseQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(...rotation));
-    const qOffset = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yawAngle);
+    const baseQuat = new THREE.Quaternion().setFromEuler(
+      new THREE.Euler(...rotation)
+    );
+    const qOffset = new THREE.Quaternion().setFromAxisAngle(
+      new THREE.Vector3(0, 1, 0),
+      yawAngle
+    );
     const targetQuat = baseQuat.multiply(qOffset);
     group.current.quaternion.slerp(targetQuat, 0.12);
   });
 
   return (
     <group ref={group} position={position} rotation={rotation}>
-      <Text
-        position={[0, height*0.3, 0.1]}
-        fontSize={height * 0.14}
-        color="#222"
-        anchorX="center"
-        anchorY="middle"
-        maxWidth={width * 1}
-      >
-      </Text>
-
-      <mesh ref={front} position={[0, 0, depth / 1.80]} onClick={handleClick}>
+      {/* Front, Back, Edge meshes */}
+      <mesh ref={front} position={[0, 0, depth / 1.8]} onClick={handleClick}>
         <planeGeometry args={[width, height]} />
         <meshStandardMaterial
           map={texture}
@@ -153,6 +162,7 @@ export default function FloatingPaper({
         />
       </mesh>
 
+      {/* Expanded content */}
       {expanded && (
         <>
           <Html
@@ -169,36 +179,109 @@ export default function FloatingPaper({
               borderRadius: 12,
               boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
               backdropFilter: "blur(6px)",
+              userSelect: "text",
             }}
           >
             <div>
               <strong style={{ fontSize: "0.8rem" }}>{content.title}</strong>
-              <p style={{ marginTop: "0.1rem", fontSize: "0.7rem", lineHeight: 1, whiteSpace: "normal", wordWrap: "break-word" }}>
+              <p
+                style={{
+                  marginTop: "0.1rem",
+                  fontSize: "0.7rem",
+                  lineHeight: 1,
+                  whiteSpace: "normal",
+                  wordWrap: "break-word",
+                }}
+              >
                 {content.description}
               </p>
             </div>
           </Html>
 
-          <group
-            position={[0, -1.4, depth]}
-            ref={buttonRef}
-            onClick={openExternal}
-            style={{ cursor: "pointer" }}
-          >
-            <mesh>
-              <planeGeometry args={[ width * 0.40, height * 0.2]} />
-              <meshStandardMaterial color="#007acc" />
-            </mesh>
-            <Text
-              position={[0, 0, 0.01]}
-              fontSize={height * 0.1}
-              color="white"
-              anchorX="center"
-              anchorY="middle"
+          {/* Main Open/Verify button */}
+          {!confirming && (
+            <group
+              position={[0, -1.4, depth]}
+              ref={buttonRef}
+              onClick={handleOpenClick}
+              style={{ cursor: "pointer" }}
             >
-              {webUrl ? "Verify" : "Open Paper"}
-            </Text>
-          </group>
+              <mesh>
+                <planeGeometry args={[width * 0.4, height * 0.2]} />
+                <meshStandardMaterial color="#007acc" />
+              </mesh>
+              <Text
+                position={[0, 0, 0.01]}
+                fontSize={height * 0.1}
+                color="white"
+                anchorX="center"
+                anchorY="middle"
+              >
+                {webUrl ? "Verify" : "Open Paper"}
+              </Text>
+            </group>
+          )}
+
+          {/* Confirmation prompt */}
+          {confirming && (
+            <group position={[0, -1.4, depth]}>
+              <mesh>
+                <planeGeometry args={[width * 0.8, height * 0.3]} />
+                <meshStandardMaterial color="#ffffff" transparent opacity={0.95} />
+              </mesh>
+              <Text
+                position={[0, height * 0.06, 0.01]}
+                fontSize={height * 0.07}
+                color="#222"
+                anchorX="center"
+                anchorY="middle"
+              >
+                {`Redirecting to:\n${webUrl || pdfUrl}\nProceed?`}
+              </Text>
+
+              {/* Yes Button */}
+              <group
+                position={[-width * 0.2, -height * 0.08, 0.02]}
+                onClick={handleConfirmYes}
+                style={{ cursor: "pointer" }}
+              >
+                <mesh>
+                  <planeGeometry args={[width * 0.15, height * 0.1]} />
+                  <meshStandardMaterial color="#0ea5e9" />
+                </mesh>
+                <Text
+                  position={[0, 0, 0.01]}
+                  fontSize={height * 0.07}
+                  color="white"
+                  anchorX="center"
+                  anchorY="middle"
+                >
+                  Yes
+                </Text>
+              </group>
+
+              {/* No Button */}
+              <group
+                position={[width * 0.2, -height * 0.08, 0.02]}
+                onClick={handleConfirmNo}
+                style={{ cursor: "pointer" }}
+              >
+                <mesh>
+                  <planeGeometry args={[width * 0.15, height * 0.1]} />
+                  <meshStandardMaterial color="#ddd" />
+                </mesh>
+                <Text
+                  position={[0, 0, 0.01]}
+                  fontSize={height * 0.07}
+                  color="#222"
+                  anchorX="center"
+                  anchorY="middle"
+                >
+                  No
+                </Text>
+              </group>
+            </group>
+          )}
         </>
       )}
     </group>

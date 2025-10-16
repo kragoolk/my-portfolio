@@ -80,10 +80,10 @@ export default function Experience() {
                 position={[13.1, 1.4, -7.5]} size={2} rotation={[0, -Math.PI / 3, 0]} />
         <FloatingPaper id="gcpc" 
           url="/media/images/GCPC.jpg" webUrl="https://www.coursera.org/account/accomplishments/specialization/A1V1TMEGLL7G"
-          position={[12.5, 4.5, -9.5]} size={2.3} rotation={[0, -Math.PI / 3, 0]} />
+          position={[12.5, 3.8, -9.5]} size={2.3} rotation={[0, -Math.PI / 3, 0]} />
         <FloatingPaper id="ibm" 
           url="/media/images/IBM.jpg" webUrl="https://www.credly.com/badges/60c7bbc5-8bd2-4594-b085-3845f86f8360/email"
-          position={[12.3, 7.5, -9.5]} size={2.5} rotation={[0, -Math.PI / 3, 0]} />
+          position={[12.3, 6.5, -9.5]} size={2.5} rotation={[0, -Math.PI / 3, 0]} />
 
         {/* Miscellaneous */}
         <FloatingImage id="utsa" url="/media/images/UTSA.jpg"
