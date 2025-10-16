@@ -2,7 +2,7 @@ import { forwardRef, useRef, useEffect } from "react"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { PointerLockControls } from "@react-three/drei"
 
-export default function CustomPointerControls({ sensitivity = 8 }) {
+export default function CustomPointerControls({ sensitivity = 4 }) {
   const controlsRef = useRef()
 
   useEffect(() => {

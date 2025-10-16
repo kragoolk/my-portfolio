@@ -1,19 +1,11 @@
+// src/components/FloatingVideo.jsx
 import React, { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import ImageContents from "./ImageContents";
+import { useSelection } from './SelectionContext';
 
-/**
- * FloatingVideo (glass panel with video texture)
- *
- * Props:
- * - url: string (video path, mp4 etc)
- * - id: optional string for content lookup (optional)
- * - position: [x,y,z]
- * - size: number (height in world units)
- * - rotation: rotation in euler angles
- */
 export default function FloatingVideo({
   url,
   id = null,
@@ -26,26 +18,25 @@ export default function FloatingVideo({
   const back = useRef();
   const edge = useRef();
   const { camera } = useThree();
+  const { select, isSelected } = useSelection();
 
   const phase = useRef(Math.random() * Math.PI * 2);
 
-  // video element and texture
   const videoRef = useRef(document.createElement("video"));
   const [videoReady, setVideoReady] = useState(false);
   const videoTextureRef = useRef(null);
 
-  // Setup video element
   useEffect(() => {
     const video = videoRef.current;
     video.src = url;
     video.crossOrigin = "anonymous";
     video.loop = true;
-    video.muted = true; // start muted, will unmute on play
+    video.muted = true;
     video.playsInline = true;
     video.preload = "auto";
-    video.pause(); // initially paused
+    video.pause();
     video.load();
-    
+
     const handleCanPlay = () => {
       setVideoReady(true);
       videoTextureRef.current = new THREE.VideoTexture(video);
@@ -66,72 +57,75 @@ export default function FloatingVideo({
     };
   }, [url]);
 
-  // state to toggle play/pause
   const [playing, setPlaying] = useState(false);
 
-  // derived size and aspect ratio (default aspect 16:9 typical for video)
   const aspect = 16 / 9;
   const height = size;
   const width = size * aspect;
   const depth = Math.max(0.02, Math.min(0.12, Math.max(width, height) * 0.02));
 
-  // base position for bobbing
   const basePos = useRef(new THREE.Vector3(...position));
 
-  // Determine content key for popup info
   const deriveId = () => {
     if (id) return id;
     try {
       const fname = url.split("/").pop();
-      return fname ? fname.split(".")[0] : "default";
+      return fname ? fname.split(".")[0] : url;
     } catch {
-      return "default";
+      return url;
     }
   };
-  const contentKey = deriveId();
+  const uniqueId = deriveId();
+  const contentKey = id || deriveId();
   const content = ImageContents[contentKey] || ImageContents.default;
+
+  const expanded = isSelected(uniqueId);
+
+  useEffect(() => {
+    if (group.current) {
+      group.current.userData.id = uniqueId;
+      group.current.userData.type = 'video';
+    }
+  }, [uniqueId]);
+
+  // Sync playing state with expanded
+  useEffect(() => {
+    if (!videoReady) return;
+    if (expanded) {
+      videoRef.current.muted = false;
+      videoRef.current.play();
+      setPlaying(true);
+    } else {
+      videoRef.current.pause();
+      videoRef.current.muted = true;
+      setPlaying(false);
+    }
+  }, [expanded, videoReady]);
 
   const handleClick = (e) => {
     e.stopPropagation && e.stopPropagation();
-    if (!videoReady) return;
-    if (playing) {
-      videoRef.current.pause();
-    } else {
-      // unmute and play
-      videoRef.current.muted = false;
-      videoRef.current.play();
-    }
-    setPlaying(!playing);
+    select(uniqueId);
   };
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime() + phase.current;
     if (!group.current) return;
 
-    // bobbing animation with sine
     const bob = Math.sin(t * 0.8 + phase.current) * 0.06;
     const targetPos = basePos.current.clone();
     targetPos.y += bob;
     group.current.position.lerp(targetPos, 0.12);
 
-    // scale changes when playing
-    const desiredScale = playing ? 1.8 : 1.0;
+    const desiredScale = playing ? 1.5 : 1.0;
     const curS = group.current.scale.x || 1;
     group.current.scale.setScalar(curS + (desiredScale - curS) * 0.12);
 
-    // Face camera with small oscillating yaw
     const yawAngle = Math.sin(t * 6 + phase.current) * 0.005;
-    const baseQuat = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(...rotation)
-    );
-    const qOffset = new THREE.Quaternion().setFromAxisAngle(
-      new THREE.Vector3(0, 1, 0),
-      yawAngle
-    );
+    const baseQuat = new THREE.Quaternion().setFromEuler(new THREE.Euler(...rotation));
+    const qOffset = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yawAngle);
     const targetQuat = baseQuat.multiply(qOffset);
     group.current.quaternion.slerp(targetQuat, 0.12);
 
-    // update video texture if playing
     if (playing && videoTextureRef.current) {
       videoTextureRef.current.needsUpdate = true;
     }
@@ -139,11 +133,10 @@ export default function FloatingVideo({
 
   return (
     <group ref={group} position={position} rotation={rotation}>
-      {/* Front video plane */}
       <mesh ref={front} position={[0, 0, depth / 1.89]} onClick={handleClick}>
         <planeGeometry args={[width, height]} />
         <meshBasicMaterial
-          map={videoTextureRef.current || null} // show video if ready
+          map={videoTextureRef.current || null}
           toneMapped={false}
           transparent={false}
         />
@@ -152,7 +145,6 @@ export default function FloatingVideo({
         )}
       </mesh>
 
-      {/* Back plane */}
       <mesh
         ref={back}
         position={[0, 0, -depth / 1.89]}
@@ -169,7 +161,6 @@ export default function FloatingVideo({
         />
       </mesh>
 
-      {/* Edge */}
       <mesh ref={edge} position={[0, 0, 0]} onClick={handleClick}>
         <boxGeometry args={[width, height, depth]} />
         <meshPhysicalMaterial
@@ -183,10 +174,9 @@ export default function FloatingVideo({
         />
       </mesh>
 
-      {/* Popup content */}
       {playing && (
         <Html
-          position={[0, height * 0.8, 1]}
+          position={[0, height * 0.7, 0.3]}
           center
           transform
           occlude

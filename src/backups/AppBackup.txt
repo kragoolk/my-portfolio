@@ -12,8 +12,7 @@ export default function App() {
       <Experience />
 
       {/* Overlay blocks interaction until visitor clicks Ready? */}
-      {!entered && <LoadingScreen onEnter={() => setEntered(true)} />}
-
+      <LoadingScreen entered={entered} onEnter={() => setEntered(true)} />
       {/* When user clicks Ready we simply stop rendering the overlay.
           (Experience remains mounted the whole time.) */}
     </>

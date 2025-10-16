@@ -8,7 +8,7 @@ import { UltraHDRLoader } from 'three/addons/loaders/UltraHDRLoader.js'
 extend({ UltraHDRLoader })
 
 export default function TorusKnotHDR({
-  hdrPath = '/media/hdri/qwantani_moon_noon_puresky_4k.exr',
+  hdrPath = '/media/hdri/qwantani_moon_noon_puresky_2k.exr',
   exposure = 1,
   roughness = 0.0,
   metalness = 1.0,

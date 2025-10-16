@@ -10,20 +10,18 @@ import FloatingPaper from "./components/FloatingPaper"
 import CrosshairOverlay from "./components/CrosshairOverlay"
 import { FloatingSphere, FloatingPoly } from "./components/FloatingObjects"
 import ClickHandler from "./components/Raycasting"
-import GradientBackground from "./components/GradientBackground"
 import CustomPointerControls from "./components/CustomPointerControls"
-import TorusKnotHDR from './components/TorusKnotHDR'
 import ActionButton from './components/ActionButton'
 import MorphingTorusKnotHDR from './components/MorphingTorusKnotHDR'
+import ControlsHUD from './components/ControlsHUD'
 
 export default function Experience() {
   const clickablesRef = useRef()
-  const hdriUrl = "/media/hdri/qwantani_moon_noon_puresky_4k.exr"
+  const hdriUrl = "/media/hdri/citrus_orchard_puresky_2k.hdr"
  
   return (
   <>
     <Canvas
-      shadows
       camera={{ position: [0, 2, 10], fov: 90 }}
       style={{ width: "100%", height: "100vh" }}
       gl={{ 
@@ -40,23 +38,14 @@ export default function Experience() {
         position={[0, 10, 0]}
         intensity={1.5}
       /> 
-      
-      <TorusKnotHDR
-	hdrPath={hdriUrl}          // <-- your existing HDR file
-	exposure={1.0}
-	roughness={0.0}
-	metalness={1.0}
-	position={[0, 2.7, 0.5]}
-	scale={2.5}
-      />	
 
         <MorphingTorusKnotHDR
 	  hdrPath={hdriUrl}
 	  exposure={1.0}
 	  roughness={0.18}
-	  metalness={1.0}
+	  metalness={0.5}
 	  morphStrength={0.1}
-	  animationSpeed={0.8}
+	  animationSpeed={0.5}
 	  position={[0, 2.7, 0.5]}
 	  scale={2.5}
 	  
@@ -150,16 +139,17 @@ export default function Experience() {
 	<mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]} >
 	  <planeGeometry args={[1000, 1000]} />
 	  <MeshReflectorMaterial
-	    blur={[1000, 1000]}        // Blur reflections (horizontal, vertical)
+	    blur={[100, 100]}        // Blur reflections (horizontal, vertical)
 	    mixBlur={0.5}              // How much blur mixes with surface roughness (default = 1)
-	    mixStrength={0.5}        // Reflection strength
-	    roughness={0.2}          // Surface roughness (0=mirror sharp, 1=matte)
+	    mixStrength={1.5}        // Reflection strength
+	    roughness={0.1}          // Surface roughness (0=mirror sharp, 1=matte)
 	    resolution={1024}        // Resolution of the reflection render buffer
 	    mirror={1}               // 0 = texture colors, 1 = environment map colors
-	    depthScale={0.001}        // Depth factor scale of the reflection distortion
+	    depthScale={0.01}        // Depth factor scale of the reflection distortion
 	    minDepthThreshold={0.8}  // Lower edge threshold to depth blur interpolation
 	    maxDepthThreshold={1}    // Upper edge threshold to depth blur interpolation
 	    color="#a4c1db"          // Base color of the plane
+	    metalness={0.5}
 	  />
 	</mesh>
       
@@ -168,6 +158,7 @@ export default function Experience() {
 
       {/* Overlay UI */}
       <CrosshairOverlay size={5} color="rgba(0,0,0,0.95)" styleType="dot" />
+      <ControlsHUD />
   </>
  );
-}
+i}
