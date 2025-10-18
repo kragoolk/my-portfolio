@@ -142,14 +142,14 @@ export default function Experience() {
 	    blur={[100, 100]}        // Blur reflections (horizontal, vertical)
 	    mixBlur={0.5}              // How much blur mixes with surface roughness (default = 1)
 	    mixStrength={1.5}        // Reflection strength
-	    roughness={0.1}          // Surface roughness (0=mirror sharp, 1=matte)
+	    roughness={0.01}          // Surface roughness (0=mirror sharp, 1=matte)
 	    resolution={1024}        // Resolution of the reflection render buffer
 	    mirror={1}               // 0 = texture colors, 1 = environment map colors
 	    depthScale={0.01}        // Depth factor scale of the reflection distortion
 	    minDepthThreshold={0.5}  // Lower edge threshold to depth blur interpolation
 	    maxDepthThreshold={1}    // Upper edge threshold to depth blur interpolation
-	    color="#a4c1db"          // Base color of the plane
-	    metalness={0.5}
+	    color="#ffffff"          // Base color of the plane a4c1db
+	    metalness={0.3}
 	  />
 	</mesh>
       

@@ -116,8 +116,8 @@ export default function FloatingVideo({
     targetPos.y += bob;
     group.current.position.lerp(targetPos, 0.12);
 
-    const desiredScale = playing ? 1.5 : 1.0;
-    const curS = group.current.scale.x || 1;
+    const desiredScale = playing ? 1.3 : 1.0;
+    const curS = group.current.scale.x || 0.5;
     group.current.scale.setScalar(curS + (desiredScale - curS) * 0.12);
 
     const yawAngle = Math.sin(t * 6 + phase.current) * 0.005;
@@ -176,7 +176,7 @@ export default function FloatingVideo({
 
       {playing && (
         <Html
-          position={[0, height * 0.7, 0.3]}
+          position={[0, height * 0.9, 0.3]}
           center
           transform
           occlude
@@ -205,8 +205,8 @@ export default function FloatingVideo({
             </div>
             <p
               style={{
-                marginTop: "0.5rem",
-                fontSize: "0.9rem",
+                marginTop: "0.3rem",
+                fontSize: "0.8rem",
                 lineHeight: 1,
                 whiteSpace: "normal",
                 wordWrap: "break-word",

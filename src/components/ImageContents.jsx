@@ -9,11 +9,11 @@ const ImageContents = {
   curvytree: {
     title: "Curvy Tree",
     description:
-      "This was in Washington State, 30 miles south of the Canadian border, somewhere within a few miles of the Pend Orielle River. I wonder what made the tree curve this way.",
+      "This was in Washington State, 30 miles south of the Canadian border, within a few miles of the Pend Orielle River. The woods were often very serene, far from civilization.",
   },
   grasssea: {
     title: "Grass Sea",
-    description: "Broken down home. I think this was in Montana.",
+    description: "A cabin sitting in ruin. You can see nature has taken its course.  I think this was in Montana.",
   },
   lonecanyon: {
     title: "Dark Canyon",
@@ -21,15 +21,15 @@ const ImageContents = {
   },
   butterfly: {
     title: "Butterfly",
-    description: "Macro study of a butterfly's wing texture and color accents.",
+    description: "Monarch butterfly resting near the base of the natural arch.",
   },
   biglandscape: {
     title: "Distant Yellowstone",
-    description: "Shot on a highway somewhere in Montana.",
+    description: "Shot on a highway in Montana.",
   },
   underwater: {
     title: "Underwater",
-    description: "Underwater scene with soft, blue-green light — exploring weightlessness and calm.",
+    description: "Down in the murky weeds of the Pend Orielle River, sucking up plants with a 500gal/min vacuum shredder.",
   },
   securityplus: {
     title: "CompTIA Security+",
@@ -40,8 +40,8 @@ const ImageContents = {
     description: "BBA - Cyber Security @ UTSA | Graduating in Spring of 2026.",
   },
   sore_htx: {
-    title: "Sore Subject at The Maxstar Fest",
-    description: "That's me on the right.",
+    title: "Sore Subject performing in Houston, TX. July 2024.",
+    description: "Covering Tesselation by Mild High Club. I'm on the keyboard.",
   },
   EventAnalysis:{
     title: "Event Analysis",
