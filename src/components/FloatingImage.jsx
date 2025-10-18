@@ -99,7 +99,7 @@ export default function FloatingImage({
           transparent={false}
           opacity={1}
           roughness={0}
-          metalness={0.8}
+          metalness={0.3}
           envMapIntensity={3}
         />
       </mesh>
@@ -118,7 +118,7 @@ export default function FloatingImage({
           transparent={false}
           opacity={0.88}
           roughness={0.18}
-          metalness={0.02}
+          metalness={0.3}
           envMapIntensity={0.3}
         />
       </mesh>

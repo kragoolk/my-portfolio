@@ -17,7 +17,7 @@ import ControlsHUD from './components/ControlsHUD'
 
 export default function Experience() {
   const clickablesRef = useRef()
-  const hdriUrl = "/media/hdri/citrus_orchard_puresky_2k.hdr"
+  const hdriUrl = "/media/hdri/kloofendal_48d_partly_cloudy_puresky_2k.hdr"
  
   return (
   <>
@@ -36,16 +36,16 @@ export default function Experience() {
       <ambientLight intensity={1.5} />
       <directionalLight
         position={[0, 10, 0]}
-        intensity={1.0}
+        intensity={1.3}
       /> 
 
         <MorphingTorusKnotHDR
 	  hdrPath={hdriUrl}
-	  exposure={1.0}
-	  roughness={0.18}
-	  metalness={0.5}
-	  morphStrength={0.1}
-	  animationSpeed={0.5}
+	  exposure={0.9}
+	  roughness={0.02}
+	  metalness={0.1}
+	  morphStrength={1}
+	  animationSpeed={0.3}
 	  position={[0, 2.7, 0.5]}
 	  scale={2.5}
 	  
