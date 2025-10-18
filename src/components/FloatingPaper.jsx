@@ -201,7 +201,7 @@ export default function FloatingPaper({
           {/* Main Open/Verify button */}
           {!confirming && (
             <group
-              position={[0, -1.4, depth]}
+              position={[0, -1.6, depth]}
               ref={buttonRef}
               onClick={handleOpenClick}
               style={{ cursor: "pointer" }}

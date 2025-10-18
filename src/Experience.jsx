@@ -47,7 +47,7 @@ export default function Experience() {
 	  morphStrength={1}
 	  animationSpeed={0.3}
 	  position={[0, 2.7, 0.5]}
-	  scale={2.5}
+	  scale={2}
 	  
 	/>
       {/* Clickable group: all interactable objects go inside here */}
@@ -82,17 +82,17 @@ export default function Experience() {
 
         {/* Certifications */}
         <FloatingImage id="securityplus" url="/media/images/SecurityPlus.jpg"
-                position={[13.1, 1.4, -7.5]} size={2} rotation={[0, -Math.PI / 3, 0]} />
+                position={[12, 1, -10.5]} size={2.3} rotation={[0, -Math.PI / 3, 0]} />
         <FloatingPaper id="gcpc" 
           url="/media/images/GCPC.jpg" webUrl="https://www.coursera.org/account/accomplishments/specialization/A1V1TMEGLL7G"
-          position={[12.5, 3.8, -9.5]} size={2.3} rotation={[0, -Math.PI / 3, 0]} />
+          position={[12.1, 4, -10.3]} size={2.3} rotation={[0, -Math.PI / 3, 0]} />
         <FloatingPaper id="ibm" 
           url="/media/images/IBM.jpg" webUrl="https://www.credly.com/badges/60c7bbc5-8bd2-4594-b085-3845f86f8360/email"
-          position={[12.3, 6.5, -9.5]} size={2.5} rotation={[0, -Math.PI / 3, 0]} />
-
+          position={[13.6, 4, -7.6]} size={2.5} rotation={[0, -Math.PI / 3, 0]} />
+//13.6, 1.4, -7.8 | 12, 1.4, -10.5
         {/* Miscellaneous */}
         <FloatingImage id="utsa" url="/media/images/UTSA.jpg"
-                position={[12, 1.4, -10.5]} size={1.7} rotation={[0, -Math.PI / 3, 0]} />
+                position={[13.6, 1.4, -7.7]} size={1.7} rotation={[0, -Math.PI / 3, 0]} />
         <FloatingPaper  
           url="/media/images/wireshark.jpg"
           id="EventAnalysis"
@@ -111,28 +111,28 @@ export default function Experience() {
         <ActionButton
           label="RESUME"
           link="/media/resume/OliverKraussResume.pdf"
-          position={[-0.55, 2, 5.5]}
+          position={[-0.55, 2, 4.5]}
           size={0.5}
           rotation={[0, Math.PI*2, 0]}
         />
         <ActionButton
           label="LINKEDIN"
           link="https://linkedin.com/in/oliverkrauss"
-          position={[0.55, 2, 5.5]}
+          position={[0.55, 2, 4.5]}
           size={0.5}
           rotation={[0, Math.PI *2, 0]}
         />
         <ActionButton
           label="CONTACT"
           link="mailto:olkraussgo@gmail.com"
-          position={[-0.55, 1.4, 5.5]}
+          position={[-0.55, 1.4, 4.5]}
           size={0.5}
           rotation={[0, Math.PI *2, 0]}
         />
         <ActionButton
           label="GITHUB"
           link="https://github.com/kragoolk"
-          position={[0.55, 1.4, 5.5]}
+          position={[0.55, 1.4, 4.5]}
           size={0.5}
           rotation={[0, Math.PI *2, 0]}
         />
