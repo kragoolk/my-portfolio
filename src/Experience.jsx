@@ -52,8 +52,13 @@ export default function Experience() {
 	/>
       {/* Clickable group: all interactable objects go inside here */}
       <group ref={clickablesRef}>
-        <FloatingSphere  />
-        <FloatingPoly />
+        <FloatingSphere 
+		position={[-9, 5, -9]}
+	/>
+          
+	<FloatingPoly 
+	        position={[10, 5, -9]}
+	/>
 
         {/* Bottom Row L-R */}
         <FloatingImage id="butterfly" url="/media/images/Butterfly.jpg"
@@ -92,10 +97,16 @@ export default function Experience() {
           url="/media/images/wireshark.jpg"
           id="EventAnalysis"
           pdfUrl="/media/papers/EventAnalysis_Krauss.pdf"
-          position={[-13, 2, -9.3]}
+          position={[-12.8, 1.6, -9.1]}
           size={3}
           rotation={[0, Math.PI / 3, 0]} />
-
+	<FloatingPaper
+          url="/media/images/ZenmapImage.jpg"
+          id="RootCause"
+          pdfUrl="/media/papers/RootCause_Krauss.pdf"
+          position={[-12.8, 6, -9.1]}
+          size={3}
+          rotation={[0, Math.PI / 3, 0]} />
         {/* Action Buttons */}
         <ActionButton
           label="RESUME"

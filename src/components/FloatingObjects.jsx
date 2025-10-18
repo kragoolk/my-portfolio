@@ -7,7 +7,7 @@ export function FloatingSphere() {
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime()
-    ref.current.position.y = baseY + Math.sin(t) * 1.5 // gentle float
+    ref.current.position.y = baseY + Math.sin(t) * 3 // gentle float
     ref.current.rotation.y += 0.01 // slow spin
   })
 
@@ -19,11 +19,11 @@ export function FloatingSphere() {
   return (
     <mesh
       ref={ref}
-      position={[3, baseY, -27]}
+      position={[-16, 5, -3]}
       onClick={handleClick} // <--- added
     >
       <sphereGeometry args={[2, 30, 30]} />
-      <meshStandardMaterial color="green" />
+      <meshStandardMaterial color="lightblue" />
     </mesh>
   )
 }
@@ -34,7 +34,7 @@ export function FloatingPoly() {
   
   useFrame((state) => {
     const t = state.clock.getElapsedTime()
-    ref.current.position.y = baseY + Math.cos(t) * 2
+    ref.current.position.y = baseY + Math.cos(t) * 4
     
     ref.current.rotation.x += 0.05
     ref.current.rotation.y += 0.1
@@ -47,7 +47,7 @@ export function FloatingPoly() {
   return (
     <mesh
       ref={ref}
-      position={[-3, baseY, -27]}
+      position={[18, 3, -8]}
       onClick={handleClick}
     >
       <icosahedronGeometry args={[1, 0]} />

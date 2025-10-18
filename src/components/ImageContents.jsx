@@ -1,4 +1,4 @@
-// src/ImageContents.jsx
+// SRC/iMAGEcONTENTS.JSX
 const ImageContents = {
   // keys should match the `id` you pass into FloatingImage or the filename (without extension)
   archloop: {
@@ -45,8 +45,12 @@ const ImageContents = {
   },
   EventAnalysis:{
     title: "Event Analysis",
-    description: "This paper presents a detailed forensic analysis of a real-world network packet capture, revealing multi-stage compromise including exploitation of a zero-day FTP vulnerability, lateral movement, and probable data exfiltration, highlighting critical security weaknesses in legacy home environments.",
+    description: "This paper presents a detailed forensic analysis of a real-world network packet capture, revealing multi-stage compromise including exploitation of a zero-day FTP vulnerability, lateral movement, and probable data exfiltration, highlighting critical security weaknesses in legacy home environments. Performed in September, 2025.",
   },
+  RootCause:{
+    title: "Security Incident Report: Root Cause Analysis",
+    description: "This project analyzes a Windows XP system compromise that began when a user downloaded pirated software from a piracy website, which installed a backdoor granting attackers remote control, credential access, and persistence. The case highlights the real-world risks of malicious software sources, showing how a single user action can lead to system-wide exposure, password theft, and network vulnerability. Performed in October, 2025.",
+},
   gcpc:{
     title: "Google Cybersecurity Professional Certification",
     description: "Skills attained: Cyber Threat Intelligence, Cyber Attacks, Cloud Security, Bash, Network Security, Threat Management, Vulnerability Management, Computer Security Incident Management, SQL, Python. Acquired in July 2025.",
