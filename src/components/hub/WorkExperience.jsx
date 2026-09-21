@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import RoleCard from "./RoleCard";
 
 const roles = [
   {
@@ -33,6 +34,16 @@ const roles = [
       "Ran Nessus-based external attack surface assessment and vulnerability enumeration against DoD-adjacent infrastructure.",
     ],
   },
+  {
+    title: "Quantum Research Team Member",
+    company: "UTSA · Post-Quantum Security Forensics",
+    dates: "Aug 2025 – Feb 2026",
+    stack: ["Post-Quantum Cryptography", "Cost-Benefit Analysis", "Grant Research", "Financial Modeling"],
+    bullets: [
+      "Conducted post-quantum cryptographic migration research and cost-benefit analysis in support of the Texas Quantum Initiative funding proposal, a $500M state pool.",
+      "Developed financial models and technical feasibility assessments supporting UTSA's quantum infrastructure grant application under Texas House Bill 4751.",
+    ],
+  },
 ];
 
 export default function WorkExperience() {
@@ -46,29 +57,14 @@ export default function WorkExperience() {
       </Reveal>
       <div className="hub-timeline">
         {roles.map((role) => (
-          <Reveal key={role.title} className="hub-timeline-item hub-timeline-item--role">
-            <div style={{ width: "100%" }}>
-              <div className="hub-role-header">
-                <div>
-                  <p className="hub-timeline-title">{role.title}</p>
-                  <p className="hub-timeline-meta">{role.company}</p>
-                </div>
-                <p className="hub-role-dates">{role.dates}</p>
-              </div>
-              <div className="hub-card-tags" style={{ margin: "10px 0" }}>
-                {role.stack.map((tech) => (
-                  <span className="hub-card-tag" key={tech}>
-                    {tech}
-                  </span>
-                ))}
-              </div>
-              <ul className="hub-role-bullets">
-                {role.bullets.map((b, i) => (
-                  <li key={i}>{b}</li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
+          <RoleCard
+            key={role.title}
+            title={role.title}
+            meta={role.company}
+            dates={role.dates}
+            stack={role.stack}
+            bullets={role.bullets}
+          />
         ))}
       </div>
     </section>

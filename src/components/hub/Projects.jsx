@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import RoleCard from "./RoleCard";
 
 const projects = [
   {
@@ -25,6 +26,16 @@ const projects = [
       "Developed and published a network scanner in Go, documenting the build as an ongoing technical write-up series.",
     ],
   },
+  {
+    title: "Arch Linux Cyber Operations Workstation",
+    role: "Maintainer",
+    dates: "Spring 2025 – Present",
+    stack: ["Arch Linux", "Docker", "Metasploit", "Wireshark", "Python", "Bash", "Go"],
+    bullets: [
+      "Maintain a customized Arch Linux workstation as a daily-driver lab environment, integrating Docker-based security tools, Metasploit, and Wireshark for hands-on testing.",
+      "Developed small Python and Bash utilities to automate log collection and network analysis workflows used in practice investigations.",
+    ],
+  },
 ];
 
 export default function Projects() {
@@ -38,29 +49,14 @@ export default function Projects() {
       </Reveal>
       <div className="hub-timeline">
         {projects.map((project) => (
-          <Reveal key={project.title} className="hub-timeline-item hub-timeline-item--role">
-            <div style={{ width: "100%" }}>
-              <div className="hub-role-header">
-                <div>
-                  <p className="hub-timeline-title">{project.title}</p>
-                  <p className="hub-timeline-meta">{project.role}</p>
-                </div>
-                <p className="hub-role-dates">{project.dates}</p>
-              </div>
-              <div className="hub-card-tags" style={{ margin: "10px 0" }}>
-                {project.stack.map((tech) => (
-                  <span className="hub-card-tag" key={tech}>
-                    {tech}
-                  </span>
-                ))}
-              </div>
-              <ul className="hub-role-bullets">
-                {project.bullets.map((b, i) => (
-                  <li key={i}>{b}</li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
+          <RoleCard
+            key={project.title}
+            title={project.title}
+            meta={project.role}
+            dates={project.dates}
+            stack={project.stack}
+            bullets={project.bullets}
+          />
         ))}
       </div>
     </section>
