@@ -8,6 +8,14 @@ body,
   width: 100%;
 }
 
+/* Matches the hub's dark background so the brief gap between route
+   chunks (lazy-loaded pages) shows dark instead of the browser's
+   default white flashing through. */
+html,
+body {
+  background: #0a0a0a;
+}
+
 body.gallery-mode,
 body.gallery-mode #root {
   overflow: hidden;
