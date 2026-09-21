@@ -10,7 +10,7 @@ const roles = [
       "Build and commission integrated low-voltage systems (security, lighting, shades, AV, and network) for high-profile residential clients, with all subsystems centralized through Control4 over client network infrastructure.",
       "Provision, enroll, and troubleshoot hardwired and wireless device fleets; run, terminate, and label keypad and device loops; configure scheduled and trigger-based automation logic across whole-home deployments.",
       "Trace, test, and commission smoke and CO life-safety loops to specification, including end-of-line supervision and head-end verification.",
-      "Completed a full security system installation solo on a residence lacking keypad prewire — traced a spare 4-conductor run from the smoke loop, located and rejoined mid-run splices, and repurposed it to establish supervision to the head-end without opening finished drywall.",
+      "Completed a full security system installation solo on a residence lacking keypad prewire: traced a spare 4-conductor run from the smoke loop, located and rejoined mid-run splices, and repurposed it to establish supervision to the head-end without opening finished drywall.",
     ],
   },
   {

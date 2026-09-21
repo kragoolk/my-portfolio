@@ -19,7 +19,7 @@ const projects = [
     stack: ["EdgeRouter 4 / EdgeOS", "EdgeSwitch", "UniFi", "Pi-hole", "VLANs", "Cat6", "Go", "Docker"],
     bullets: [
       "Designed and built a whole-house Cat6 network from scratch, running home runs from every room to a central distribution point, terminated and tested with a toner/probe kit, on an EdgeRouter 4 core at full fiber throughput.",
-      "Implemented end-to-end VLAN segmentation with a trusted zone and an isolated lab zone, enforcing default-deny firewall policy so the lab segment reaches neither the internet nor trusted hosts — used to safely host an end-of-life Windows system as a contained target.",
+      "Implemented end-to-end VLAN segmentation with a trusted zone and an isolated lab zone, enforcing default-deny firewall policy so the lab segment reaches neither the internet nor trusted hosts, which let me safely host an end-of-life Windows system as a contained target.",
       "Deployed network-wide DNS filtering (Pi-hole), a managed EdgeSwitch core with 802.1Q trunking, PoE-powered UniFi access points, and a dedicated hardware controller; added a secondary resolver after diagnosing a single-point-of-failure DNS outage.",
       "Root-caused failures hands-on: recovered a switch stranded on a fallback subnet via static-IP direct connect, and traced a resolver outage to a misconfigured packet-capture path blocking dnsmasq startup.",
       "Developed and published a network scanner in Go, documenting the build as an ongoing technical write-up series.",

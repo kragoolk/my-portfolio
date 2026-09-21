@@ -3,7 +3,7 @@ import Reveal from "./Reveal";
 const items = [
   {
     title: "University of Texas at San Antonio",
-    meta: "BBA, Cyber Security — Major GPA 3.66 — Graduated May 2026",
+    meta: "BBA, Cyber Security · Major GPA 3.66 · Graduated May 2026",
     desc: "Coursework centered on network security, incident handling, and forensic analysis, including hands-on packet-capture and Windows/Linux investigation labs.",
     image: "/media/images/UTSA.jpg",
   },
@@ -23,7 +23,7 @@ const items = [
   {
     title: "IBM Cloud Computing Fundamentals",
     meta: "Certification",
-    desc: "Cloud services, deployment models, virtualization, orchestration, and cloud security — including deploying a containerized web app and analyzing security in a simulated environment.",
+    desc: "Cloud services, deployment models, virtualization, orchestration, and cloud security, including deploying a containerized web app and analyzing security in a simulated environment.",
     image: "/media/images/IBM.jpg",
     link: "https://www.credly.com/badges/60c7bbc5-8bd2-4594-b085-3845f86f8360/email",
   },

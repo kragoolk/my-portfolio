@@ -37,7 +37,7 @@ export default function WriteupsShowcase() {
       <Reveal as={Link} to="/gallery" className="hub-callout">
         <p className="hub-callout-title">Prefer exploring in 3D? →</p>
         <p className="hub-callout-desc">
-          Step into my interactive 3D gallery — photography, a live
+          Step into my interactive 3D gallery: photography, a live
           performance clip, and a more experimental way to browse.
         </p>
       </Reveal>
