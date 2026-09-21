@@ -1,4 +1,3 @@
-import Reveal from "./Reveal";
 import RoleCard from "./RoleCard";
 
 const roles = [
@@ -48,13 +47,8 @@ const roles = [
 
 export default function WorkExperience() {
   return (
-    <section id="experience" className="hub-section hub-section--tight">
-      <Reveal>
-        <p className="hub-eyebrow">
-          <span className="hub-index">02</span> Experience
-        </p>
-        <h2 className="hub-heading">Where I've worked</h2>
-      </Reveal>
+    <>
+      <h2 className="hub-heading">Where I've worked</h2>
       <div className="hub-timeline">
         {roles.map((role) => (
           <RoleCard
@@ -67,6 +61,6 @@ export default function WorkExperience() {
           />
         ))}
       </div>
-    </section>
+    </>
   );
 }

@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import "../css/hub.css";
-import NavBar from "../components/hub/NavBar";
+import StatusBar from "../components/hub/StatusBar";
 import ContactFooter from "../components/hub/ContactFooter";
 import writeups from "../content/writeups";
 
 export default function WriteupsIndex() {
   return (
     <div className="hub">
-      <NavBar />
+      <StatusBar />
       <section className="hub-section">
         <p className="hub-eyebrow">Write-ups</p>
         <h1 className="hub-heading">Investigations & analysis</h1>

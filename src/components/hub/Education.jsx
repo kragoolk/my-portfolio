@@ -31,13 +31,8 @@ const items = [
 
 export default function Education() {
   return (
-    <section id="education" className="hub-section hub-section--tight">
-      <Reveal>
-        <p className="hub-eyebrow">
-          <span className="hub-index">03</span> Education & Certifications
-        </p>
-        <h2 className="hub-heading">Where I've built my foundation</h2>
-      </Reveal>
+    <>
+      <h2 className="hub-heading">Where I've built my foundation</h2>
       <div className="hub-timeline">
         {items.map((item) => {
           const Wrapper = item.link ? "a" : "div";
@@ -56,6 +51,6 @@ export default function Education() {
           );
         })}
       </div>
-    </section>
+    </>
   );
 }
