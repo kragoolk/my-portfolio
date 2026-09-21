@@ -5,7 +5,7 @@ import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/atom-one-dark.css";
 import "../css/hub.css";
 import "../css/writeup.css";
-import StatusBar from "../components/hub/StatusBar";
+import NavBar from "../components/hub/NavBar";
 import ContactFooter from "../components/hub/ContactFooter";
 import { getWriteup } from "../content/writeups";
 
@@ -17,7 +17,7 @@ export default function WriteupPage() {
 
   return (
     <div className="hub">
-      <StatusBar />
+      <NavBar />
       <article className="hub-section">
         <Link to="/writeups" className="writeup-back">
           ← Back to write-ups

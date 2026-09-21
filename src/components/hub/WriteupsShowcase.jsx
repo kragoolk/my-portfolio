@@ -4,8 +4,13 @@ import Reveal from "./Reveal";
 
 export default function WriteupsShowcase() {
   return (
-    <>
-      <h2 className="hub-heading">Investigations & analysis</h2>
+    <section id="writeups" className="hub-section hub-section--tight">
+      <Reveal>
+        <p className="hub-eyebrow">
+          <span className="hub-index">05</span> Write-ups
+        </p>
+        <h2 className="hub-heading">Investigations & analysis</h2>
+      </Reveal>
       <div className="hub-index-list">
         {writeups.map((w, i) => (
           <Reveal
@@ -36,6 +41,6 @@ export default function WriteupsShowcase() {
           performance clip, and a more experimental way to browse.
         </p>
       </Reveal>
-    </>
+    </section>
   );
 }
