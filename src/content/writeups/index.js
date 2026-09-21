@@ -9,8 +9,8 @@ const writeups = [
     date: "2026-09-14",
     tags: ["Physical Access", "Offline Attacks", "chntpw"],
     summary:
-      "Bypassing a Windows 7 login with an offline SAM edit on a secondhand Dell — and the wrong-drive detour that turned a ten-minute exercise into a lesson about full-disk encryption.",
-    heroImage: "/media/writeups/windows7-breakin/01-kali-boot.jpg",
+      "Bypassing a Windows 7 login with an offline SAM edit on a secondhand Dell, and the wrong-drive detour that turned a ten-minute exercise into a lesson about full-disk encryption.",
+    heroImage: "/media/writeups/windows7-breakin/00-lego-star-wars.jpg",
     sourceUrl: "/media/papers/Windows7Breakin_Krauss.docx",
     sourceLabel: "Download Original (DOCX)",
     content: windows7BreakinMd,
