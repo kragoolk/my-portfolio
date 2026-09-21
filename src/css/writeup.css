@@ -1,0 +1,115 @@
+.writeup-header {
+  margin-bottom: 32px;
+}
+.writeup-hero {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 0;
+  border: 1px solid var(--hub-border-strong);
+  filter: grayscale(0.15);
+  margin-bottom: 28px;
+}
+.writeup-meta {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  color: var(--hub-text-dim);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.writeup-back {
+  display: inline-block;
+  color: var(--hub-text-dim);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+.writeup-back:hover {
+  color: var(--hub-accent);
+}
+.writeup-download {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--hub-border);
+}
+
+.writeup-body {
+  line-height: 1.75;
+  color: var(--hub-text);
+  font-size: 0.92rem;
+}
+.writeup-body img {
+  max-width: 100%;
+  border-radius: 0;
+  border: 1px solid var(--hub-border-strong);
+  margin: 8px 0 4px;
+  display: block;
+}
+.writeup-body h2 {
+  font-size: 1.4rem;
+  margin: 40px 0 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.writeup-body h3 {
+  font-size: 1.1rem;
+  margin: 28px 0 12px;
+  font-weight: 700;
+}
+.writeup-body p {
+  margin: 0 0 16px;
+  color: var(--hub-text-dim);
+}
+.writeup-body strong {
+  color: var(--hub-text);
+}
+.writeup-body ul,
+.writeup-body ol {
+  color: var(--hub-text-dim);
+  margin: 0 0 16px;
+  padding-left: 22px;
+}
+.writeup-body li {
+  margin-bottom: 8px;
+}
+.writeup-body a {
+  color: var(--hub-accent);
+}
+.writeup-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 24px;
+  font-size: 0.85rem;
+}
+.writeup-body th,
+.writeup-body td {
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid var(--hub-border);
+  color: var(--hub-text-dim);
+}
+.writeup-body th {
+  color: var(--hub-text);
+  background: var(--hub-surface);
+}
+.writeup-body code {
+  background: var(--hub-surface);
+  border: 1px solid var(--hub-border);
+  border-radius: 0;
+  padding: 1px 6px;
+  font-size: 0.85em;
+}
+.writeup-body pre {
+  background: var(--hub-bg-alt);
+  border: 1px solid var(--hub-border);
+  border-radius: 0;
+  padding: 16px;
+  overflow-x: auto;
+}
+.writeup-body blockquote {
+  border-left: 3px solid var(--hub-accent);
+  margin: 0 0 16px;
+  padding: 4px 0 4px 16px;
+  color: var(--hub-text-dim);
+}

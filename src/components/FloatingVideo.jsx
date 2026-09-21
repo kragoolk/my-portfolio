@@ -1,7 +1,7 @@
 // src/components/FloatingVideo.jsx
 import React, { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import ImageContents from "./ImageContents";
 import { useSelection } from './SelectionContext';
@@ -17,7 +17,6 @@ export default function FloatingVideo({
   const front = useRef();
   const back = useRef();
   const edge = useRef();
-  const { camera } = useThree();
   const { select, isSelected } = useSelection();
 
   const phase = useRef(Math.random() * Math.PI * 2);
@@ -34,7 +33,17 @@ export default function FloatingVideo({
     video.muted = true;
     video.playsInline = true;
     video.preload = "auto";
-    video.pause();
+
+    // Some browsers won't reliably decode/output frames for a <video>
+    // that's never actually in the document — keep it in the DOM but
+    // visually hidden (not display:none, which can also pause decoding).
+    video.style.position = "fixed";
+    video.style.width = "2px";
+    video.style.height = "2px";
+    video.style.opacity = "0";
+    video.style.pointerEvents = "none";
+    document.body.appendChild(video);
+
     video.load();
 
     const handleCanPlay = () => {
@@ -44,20 +53,22 @@ export default function FloatingVideo({
       videoTextureRef.current.magFilter = THREE.LinearFilter;
       videoTextureRef.current.format = THREE.RGBFormat;
       videoTextureRef.current.needsUpdate = true;
+      // Ambient loop, muted, so it plays immediately without needing a
+      // precise crosshair click — clicking still expands it for sound.
+      video.play().catch(() => {});
     };
     video.addEventListener("canplay", handleCanPlay);
 
     return () => {
       video.pause();
       video.removeEventListener("canplay", handleCanPlay);
+      if (video.parentNode) video.parentNode.removeChild(video);
       if (videoTextureRef.current) {
         videoTextureRef.current.dispose();
         videoTextureRef.current = null;
       }
     };
   }, [url]);
-
-  const [playing, setPlaying] = useState(false);
 
   const aspect = 16 / 9;
   const height = size;
@@ -88,18 +99,14 @@ export default function FloatingVideo({
     }
   }, [uniqueId]);
 
-  // Sync playing state with expanded
+  // Unmute for sound when expanded; keep the ambient loop playing either way.
+  // A click is a real user gesture, so re-issue play() here too — some
+  // browsers silently block the very first autoplay attempt at load time.
   useEffect(() => {
     if (!videoReady) return;
-    if (expanded) {
-      videoRef.current.muted = false;
-      videoRef.current.play();
-      setPlaying(true);
-    } else {
-      videoRef.current.pause();
-      videoRef.current.muted = true;
-      setPlaying(false);
-    }
+    const video = videoRef.current;
+    video.muted = !expanded;
+    video.play().catch(() => {});
   }, [expanded, videoReady]);
 
   const handleClick = (e) => {
@@ -116,7 +123,7 @@ export default function FloatingVideo({
     targetPos.y += bob;
     group.current.position.lerp(targetPos, 0.12);
 
-    const desiredScale = playing ? 1.3 : 1.0;
+    const desiredScale = expanded ? 1.3 : 1.0;
     const curS = group.current.scale.x || 0.5;
     group.current.scale.setScalar(curS + (desiredScale - curS) * 0.12);
 
@@ -126,7 +133,7 @@ export default function FloatingVideo({
     const targetQuat = baseQuat.multiply(qOffset);
     group.current.quaternion.slerp(targetQuat, 0.12);
 
-    if (playing && videoTextureRef.current) {
+    if (videoReady && videoTextureRef.current) {
       videoTextureRef.current.needsUpdate = true;
     }
   });
@@ -174,7 +181,7 @@ export default function FloatingVideo({
         />
       </mesh>
 
-      {playing && (
+      {expanded && (
         <Html
           position={[0, height * 0.9, 0.3]}
           center
@@ -220,4 +227,3 @@ export default function FloatingVideo({
     </group>
   );
 }
-

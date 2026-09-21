@@ -1,22 +1,43 @@
 // src/App.jsx
-import React, { useState } from "react";
-import Experience from "./Experience";
-import LoadingScreen from "./components/LoadingScreen";
-import { SelectionProvider } from './components/SelectionContext'
-export default function App() {
-  const [entered, setEntered] = useState(false);
+import { Suspense, lazy } from "react";
+import { Routes, Route } from "react-router-dom";
+import Hub from "./pages/Hub";
 
+// Lazy-loaded: keeps the heavy three.js/r3f/drei bundle, and the
+// react-markdown/highlight.js bundle, off the hub's initial load. Only
+// fetched when a visitor actually opens /gallery or a write-up.
+const Gallery = lazy(() => import("./pages/Gallery"));
+const WriteupsIndex = lazy(() => import("./pages/WriteupsIndex"));
+const WriteupPage = lazy(() => import("./pages/WriteupPage"));
+
+export default function App() {
   return (
-    <>
-      {/* Always mount Experience so textures/models begin loading */}
-      <SelectionProvider>
-        <Experience />
-      </SelectionProvider>
-      {/* Overlay blocks interaction until visitor clicks Ready? */}
-      <LoadingScreen entered={entered} onEnter={() => setEntered(true)} />
-      {/* When user clicks Ready we simply stop rendering the overlay.
-          (Experience remains mounted the whole time.) */}
-    </>
+    <Routes>
+      <Route path="/" element={<Hub />} />
+      <Route
+        path="/gallery"
+        element={
+          <Suspense fallback={null}>
+            <Gallery />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/writeups"
+        element={
+          <Suspense fallback={null}>
+            <WriteupsIndex />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/writeups/:slug"
+        element={
+          <Suspense fallback={null}>
+            <WriteupPage />
+          </Suspense>
+        }
+      />
+    </Routes>
   );
 }
-

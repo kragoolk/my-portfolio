@@ -2,13 +2,9 @@
 
 import React, { useRef, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
-import { useFrame, useThree, extend } from '@react-three/fiber'
-import { UltraHDRLoader } from 'three/addons/loaders/UltraHDRLoader.js'
-
-extend({ UltraHDRLoader })
+import { useFrame, useThree } from '@react-three/fiber'
 
 export default function MorphingTorusKnotHDR({
-  hdrPath = '/media/hdri/qwantani_moon_noon_puresky_2k.exr',
   exposure = 1,
   morphStrength = 0.4,
   animationSpeed = 0.8,
@@ -26,15 +22,8 @@ export default function MorphingTorusKnotHDR({
     gl.toneMappingExposure = exposure
   }, [gl, exposure])
 
-  // Load HDR
-  useEffect(() => {
-    const loader = new UltraHDRLoader().setDataType(THREE.HalfFloatType)
-    loader.load(hdrPath, (tex) => {
-      tex.mapping = THREE.EquirectangularReflectionMapping
-      scene.environment = tex
-      scene.background = tex
-    })
-  }, [hdrPath, scene])
+  // Reflects the scene's HDR environment (loaded by <Environment> as an
+  // equirectangular texture, not a cube map) — sampled as sampler2D below.
 
   // Shader material
   const material = useMemo(() => {
@@ -61,12 +50,17 @@ export default function MorphingTorusKnotHDR({
         }
       `,
       fragmentShader: /* glsl */`
-        uniform samplerCube envMap;
+        uniform sampler2D envMap;
         varying vec3 vNormal;
         varying vec3 vViewDir;
+        vec2 equirectUv(vec3 dir) {
+          float u = atan(dir.z, dir.x) / (2.0 * 3.14159265) + 0.5;
+          float v = asin(clamp(dir.y, -1.0, 1.0)) / 3.14159265 + 0.5;
+          return vec2(u, v);
+        }
         void main(){
           vec3 R = reflect(vViewDir, vNormal);
-          vec3 color = textureCube(envMap, R).rgb;
+          vec3 color = texture2D(envMap, equirectUv(R)).rgb;
           gl_FragColor = vec4(color,1.0);
         }
       `,
@@ -91,4 +85,3 @@ export default function MorphingTorusKnotHDR({
     />
   )
 }
-

@@ -37,7 +37,7 @@ const ImageContents = {
   },
   utsa: { 
     title: "University of Texas at San Antonio",
-    description: "BBA - Cyber Security @ UTSA | Graduating in Spring of 2026.",
+    description: "BBA, Cyber Security @ UTSA | Graduated May 2026.",
   },
   sore_htx: {
     title: "Sore Subject performing in Houston, TX. July 2024.",

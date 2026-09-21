@@ -328,7 +328,7 @@ export default function LoadingScreen({ entered = false, onEnter, duration = 500
 
       <div className="loader-card">
         <h1 className="welcome-title">Oliver Krauss</h1>
-        <p className="welcome-subtitle">Interactive 3D Portfolio</p>
+        <p className="welcome-subtitle">Interactive 3D Gallery</p>
 
         <div className="sphere-container">
           <div className="sphere">
@@ -377,7 +377,7 @@ export default function LoadingScreen({ entered = false, onEnter, duration = 500
             </div>
 
             <button className="btn-ready" onClick={() => onEnter && onEnter()}>
-              Enter Portfolio →
+              Enter Gallery →
             </button>
           </>
         ) : (

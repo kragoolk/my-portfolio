@@ -1,64 +1,92 @@
 import * as THREE from "three"
 import { Group } from "three"
-import { forwardRef, useRef, useEffect } from "react"
-import { Canvas, useFrame, useThree } from "@react-three/fiber"
-import { Environment, MeshReflectorMaterial } from "@react-three/drei"
+import { useRef, useState, useEffect } from "react"
+import { Canvas } from "@react-three/fiber"
+import { Environment, MeshReflectorMaterial, Sparkles } from "@react-three/drei"
 import FloatingCameraControls from "./components/FloatingCameraControls"
 import FloatingImage from "./components/FloatingImage"
 import FloatingVideo from "./components/FloatingVideo"
-import FloatingPaper from "./components/FloatingPaper"
 import CrosshairOverlay from "./components/CrosshairOverlay"
-import { FloatingSphere, FloatingPoly } from "./components/FloatingObjects"
+import Collectible from "./components/Collectible"
+import CollectibleHUD from "./components/CollectibleHUD"
 import ClickHandler from "./components/Raycasting"
 import CustomPointerControls from "./components/CustomPointerControls"
-import ActionButton from './components/ActionButton'
 import MorphingTorusKnotHDR from './components/MorphingTorusKnotHDR'
 import ControlsHUD from './components/ControlsHUD'
 
+const SKIES = [
+  { name: "Day", file: "/media/hdri/kloofendal_48d_partly_cloudy_puresky_2k.hdr", sparkleColor: "#ffffff", ambient: 1.5, directional: 1.3, exposure: 0.9 },
+  { name: "Golden Hour", file: "/media/hdri/citrus_orchard_puresky_2k.hdr", sparkleColor: "#ffd08a", ambient: 1.6, directional: 1.4, exposure: 0.9 },
+  // The night HDR is a low-luminance environment map, so the scene goes
+  // nearly black at a normal tone-mapping exposure. Boost the renderer's
+  // global exposure (set below via MorphingTorusKnotHDR) well above the
+  // daytime level so objects stay visible.
+  { name: "Night", file: "/media/hdri/qwantani_moon_noon_puresky_2k.exr", sparkleColor: "#bcd4ff", ambient: 3.5, directional: 2.4, exposure: 3.2 },
+]
+
+const COLLECTIBLES = [
+  { id: "crystal-1", position: [-16, 6, -3], geometry: "icosahedron", color: "#ff5555" },
+  { id: "crystal-2", position: [18, 5, -8], geometry: "octahedron", color: "#4fd6ff" },
+  { id: "crystal-3", position: [0, 9, -22], geometry: "sphere", color: "#ffd35e", size: 1.1 },
+  { id: "crystal-4", position: [-5, 2, 5], geometry: "torus", color: "#c084fc" },
+  { id: "crystal-5", position: [14, 7, -3], geometry: "icosahedron", color: "#4ade80" },
+  { id: "crystal-6", position: [-9, 1.4, -1], geometry: "octahedron", color: "#ff8fd6", size: 0.85 },
+]
+
 export default function Experience() {
   const clickablesRef = useRef()
-  const hdriUrl = "/media/hdri/kloofendal_48d_partly_cloudy_puresky_2k.hdr"
- 
+  const [skyIndex, setSkyIndex] = useState(0)
+  const sky = SKIES[skyIndex]
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key.toLowerCase() === "n") {
+        setSkyIndex((i) => (i + 1) % SKIES.length)
+      }
+    }
+    window.addEventListener("keydown", handleKey)
+    return () => window.removeEventListener("keydown", handleKey)
+  }, [])
+
   return (
   <>
     <Canvas
       camera={{ position: [0, 2, 10], fov: 90 }}
       style={{ width: "100%", height: "100vh" }}
-      gl={{ 
+      gl={{
 	antialias: true,
 	toneMapping: THREE.ACESFilmicToneMapping,
 	toneMappingExposure: 1.2
       }}
     >
-      <Environment files={hdriUrl} background />   
+      <Environment files={sky.file} background />
 
       {/* Lights with shadows */}
-      <ambientLight intensity={1.5} />
+      <ambientLight intensity={sky.ambient} />
       <directionalLight
         position={[0, 10, 0]}
-        intensity={1.3}
-      /> 
+        intensity={sky.directional}
+      />
 
         <MorphingTorusKnotHDR
-	  hdrPath={hdriUrl}
-	  exposure={0.9}
+	  exposure={sky.exposure}
 	  roughness={0.02}
 	  metalness={0.1}
 	  morphStrength={1}
 	  animationSpeed={0.3}
 	  position={[0, 2.7, 0.5]}
 	  scale={2}
-	  
+
 	/>
+
+      {/* Ambient atmosphere — tints with the current sky mood */}
+      <Sparkles count={150} scale={[50, 22, 50]} size={2.5} speed={0.25} opacity={0.5} color={sky.sparkleColor} />
+
       {/* Clickable group: all interactable objects go inside here */}
       <group ref={clickablesRef}>
-        <FloatingSphere 
-		position={[-9, 5, -9]}
-	/>
-          
-	<FloatingPoly 
-	        position={[10, 5, -9]}
-	/>
+        {COLLECTIBLES.map((c) => (
+          <Collectible key={c.id} {...c} />
+        ))}
 
         {/* Bottom Row L-R */}
         <FloatingImage id="butterfly" url="/media/images/Butterfly.jpg"
@@ -80,73 +108,16 @@ export default function Experience() {
         <FloatingImage id="curvytree" url="/media/images/CurvyTree.jpg"
                 position={[9, 6, -14]} size={4} rotation={[0, -Math.PI / 4, 0]} />
 
-        {/* Certifications */}
-        <FloatingImage id="securityplus" url="/media/images/SecurityPlus.jpg"
-                position={[12, 1, -10.5]} size={2.3} rotation={[0, -Math.PI / 3, 0]} />
-        <FloatingPaper id="gcpc" 
-          url="/media/images/GCPC.jpg" webUrl="https://www.coursera.org/account/accomplishments/specialization/A1V1TMEGLL7G"
-          position={[12.1, 4, -10.3]} size={2.3} rotation={[0, -Math.PI / 3, 0]} />
-        <FloatingPaper id="ibm" 
-          url="/media/images/IBM.jpg" webUrl="https://www.credly.com/badges/60c7bbc5-8bd2-4594-b085-3845f86f8360/email"
-          position={[13.6, 4, -7.6]} size={2.5} rotation={[0, -Math.PI / 3, 0]} />
-//13.6, 1.4, -7.8 | 12, 1.4, -10.5
-        {/* Miscellaneous */}
-        <FloatingImage id="utsa" url="/media/images/UTSA.jpg"
-                position={[13.6, 1.4, -7.7]} size={1.7} rotation={[0, -Math.PI / 3, 0]} />
-        <FloatingPaper  
-          url="/media/images/wireshark.jpg"
-          id="EventAnalysis"
-          pdfUrl="/media/papers/EventAnalysis_Krauss.pdf"
-          position={[-12.8, 1.6, -9.1]}
-          size={3}
-          rotation={[0, Math.PI / 3, 0]} />
-	<FloatingPaper
-          url="/media/images/ZenmapImage.jpg"
-          id="RootCause"
-          pdfUrl="/media/papers/RootCause_Krauss.pdf"
-          position={[-12.8, 6, -9.1]}
-          size={3}
-          rotation={[0, Math.PI / 3, 0]} />
-        {/* Action Buttons */}
-        <ActionButton
-          label="RESUME"
-          link="/media/resume/OliverKraussResume.pdf"
-          position={[-0.55, 2, 4.5]}
-          size={0.5}
-          rotation={[0, Math.PI*2, 0]}
-        />
-        <ActionButton
-          label="LINKEDIN"
-          link="https://linkedin.com/in/oliverkrauss"
-          position={[0.55, 2, 4.5]}
-          size={0.5}
-          rotation={[0, Math.PI *2, 0]}
-        />
-        <ActionButton
-          label="CONTACT"
-          link="mailto:olkraussgo@gmail.com"
-          position={[-0.55, 1.4, 4.5]}
-          size={0.5}
-          rotation={[0, Math.PI *2, 0]}
-        />
-        <ActionButton
-          label="GITHUB"
-          link="https://github.com/kragoolk"
-          position={[0.55, 1.4, 4.5]}
-          size={0.5}
-          rotation={[0, Math.PI *2, 0]}
-        />
-
       </group>
 
       <ClickHandler clickablesRef={clickablesRef} />
 
       {/* Controls */}
-      <CustomPointerControls />
-      <FloatingCameraControls speed={0.2} />
-      
-      {/* Horizon / ground plane */}i
-      
+      <CustomPointerControls sensitivity={1.5} />
+      <FloatingCameraControls speed={0.09} />
+
+      {/* Horizon / ground plane */}
+
 	<mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]} >
 	  <planeGeometry args={[1000, 1000]} />
 	  <MeshReflectorMaterial
@@ -163,13 +134,14 @@ export default function Experience() {
 	    metalness={0.3}
 	  />
 	</mesh>
-      
+
 
     </Canvas>
 
       {/* Overlay UI */}
       <CrosshairOverlay size={5} color="rgba(0,0,0,0.95)" styleType="dot" />
-      <ControlsHUD />
+      <ControlsHUD skyName={sky.name} />
+      <CollectibleHUD />
   </>
  );
-i}
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export default function ControlsHUD() {
+export default function ControlsHUD({ skyName }) {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -28,13 +28,36 @@ export default function ControlsHUD() {
           zIndex: 1000,
         }}
       >
-        Press <kbd style={{ 
-          background: 'rgba(0, 0, 0, 0.1)', 
-          padding: '2px 6px', 
+        Press <kbd style={{
+          background: 'rgba(0, 0, 0, 0.1)',
+          padding: '2px 6px',
           borderRadius: '3px',
           border: '1px solid rgba(0, 0, 0,255)'
         }}>H</kbd> for help
       </div>
+
+      {/* Sky mode indicator / hint */}
+      {skyName && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '48px',
+            right: '20px',
+            color: 'rgba(0, 0, 0, 255)',
+            fontSize: '13px',
+            fontFamily: 'monospace',
+            pointerEvents: 'none',
+            zIndex: 1000,
+          }}
+        >
+          Press <kbd style={{
+            background: 'rgba(0, 0, 0, 0.1)',
+            padding: '2px 6px',
+            borderRadius: '3px',
+            border: '1px solid rgba(0, 0, 0,255)'
+          }}>N</kbd> for sky · {skyName}
+        </div>
+      )}
 
       {/* Controls panel that fades in/out */}
       <div
@@ -102,6 +125,11 @@ export default function ControlsHUD() {
 	<div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Key>Esc</Key>
           <span style={{ opacity: 0.7 }}>Cursor Control</span>
+        </div>
+
+        <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Key>N</Key>
+          <span style={{ opacity: 0.7 }}>Change Sky</span>
         </div>
 
         {/* Mouse controls */}
