@@ -18,7 +18,7 @@ const roles = [
     title: "SOC Analyst Intern",
     company: "University of Texas at San Antonio",
     dates: "Jan – Mar 2026",
-    stack: ["MS Defender", "ExtraHop", "Abnormal AI", "Duo", "ServiceNow"],
+    stack: ["MS Defender", "ExtraHop", "Abnormal AI", "Duo", "ServiceNow", "Infoblox/BloxOne"],
     bullets: [
       "Triaged 40+ security alerts over 8 weeks, performing log analysis, root cause analysis, and containment actions including service deprovisioning and MAC address blocking.",
       "Escalated one alert that resulted in a confirmed incident; documented all findings in ServiceNow tickets written for both technical staff and management audiences.",
@@ -28,7 +28,7 @@ const roles = [
     title: "Junior Cybersecurity Analyst",
     company: "BEAT LLC",
     dates: "Oct 2025 – Jan 2026",
-    stack: ["Nessus", "Kali", "STIGs", "POAMs", "KnowBe4"],
+    stack: ["Nessus", "Kali", "STIGs", "POAMs", "KnowBe4", "Snort", "PfSense"],
     bullets: [
       "Performed STIG compliance reviews and POAM documentation workflows in a federal contractor environment under direct mentorship of a cybersecurity director.",
       "Ran Nessus-based external attack surface assessment and vulnerability enumeration against DoD-adjacent infrastructure.",

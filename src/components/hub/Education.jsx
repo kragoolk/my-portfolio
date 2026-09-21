@@ -4,7 +4,7 @@ const items = [
   {
     title: "University of Texas at San Antonio",
     meta: "BBA, Cyber Security · Major GPA 3.66 · Graduated May 2026",
-    desc: "Coursework centered on network security, incident handling, and forensic analysis, including hands-on packet-capture and Windows/Linux investigation labs.",
+    desc: "Coursework centered on network security, incident handling, and forensic analysis, including hands-on packet-capture and Windows/Linux investigation labs, plus introductory AWS cloud labs.",
     image: "/media/images/UTSA.jpg",
   },
   {
