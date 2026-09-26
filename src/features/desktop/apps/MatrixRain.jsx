@@ -2,10 +2,24 @@ import { useEffect, useRef } from "react";
 import { useWM } from "../wmStore";
 import { subscribe, QUALITY, canvasSize } from "../raf";
 
-const GLYPHS = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ0123456789";
-const CELL = 14;
-const HEAD = "#9df5bd";
-const BODY = "#57d98a";
+// cmatrix draws a character grid, not a blurred trail: each column runs at its
+// own speed with its own tail length, the leading cell is near-white, and
+// characters already on screen keep mutating. Reproducing that needs a real
+// per-column model rather than a translucent wash over the canvas.
+
+// cmatrix -u territory: half-width katakana mixed with ASCII.
+const GLYPHS =
+  "ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ0123456789:・.\"=*+-<>¦｜╌";
+
+const CELL_W = 12;
+const CELL_H = 14;
+const HEAD = "#d6ffe4";
+const BRIGHT = "#8ef0b0";
+const BODY = "#33c46a";
+const TAIL = "#16663a";
+
+const rand = (n) => Math.floor(Math.random() * n);
+const glyph = () => GLYPHS[rand(GLYPHS.length)];
 
 export default function MatrixRain() {
   const hostRef = useRef(null);
@@ -19,40 +33,60 @@ export default function MatrixRain() {
 
     const ctx = canvas.getContext("2d", { alpha: false });
     const q = QUALITY[quality] ?? QUALITY.high;
-    let drops = [];
-    let cols = 0;
     let dims = { w: 0, h: 0, scale: 1 };
+    let cols = [];
+    let rowCount = 0;
+
+    const newColumn = (rowsHigh, seeded) => ({
+      // Negative head keeps most columns off the top at the start so they
+      // don't all arrive in one wave.
+      head: seeded ? rand(rowsHigh) : -rand(rowsHigh),
+      speed: 0.25 + Math.random() * 0.8,
+      len: 6 + rand(Math.max(4, Math.min(22, rowsHigh - 2))),
+      chars: Array.from({ length: rowsHigh + 2 }, glyph),
+      acc: 0,
+    });
 
     const layout = () => {
       dims = canvasSize(canvas, host, q.dpr);
       ctx.setTransform(dims.scale, 0, 0, dims.scale, 0, 0);
-      const next = Math.max(1, Math.floor(dims.w / CELL));
-      if (next !== cols) {
-        cols = next;
-        drops = Array.from({ length: cols }, () => Math.random() * (dims.h / CELL));
-      }
-      ctx.fillStyle = "#0d0f11";
-      ctx.fillRect(0, 0, dims.w, dims.h);
-      ctx.font = `${CELL - 2}px "JetBrains Mono", monospace`;
+      ctx.font = `${CELL_H - 2}px "JetBrains Mono", ui-monospace, monospace`;
       ctx.textBaseline = "top";
+
+      rowCount = Math.max(4, Math.floor(dims.h / CELL_H));
+      const want = Math.max(1, Math.floor(dims.w / CELL_W));
+      cols = Array.from({ length: want }, () => newColumn(rowCount, true));
     };
 
     const frame = () => {
-      // Translucent wash instead of a clear: this is what leaves the trails.
-      ctx.fillStyle = "rgba(13, 15, 17, 0.09)";
+      ctx.fillStyle = "#070b09";
       ctx.fillRect(0, 0, dims.w, dims.h);
 
-      for (let i = 0; i < cols; i += 1) {
-        const y = drops[i] * CELL;
-        const ch = GLYPHS[(Math.random() * GLYPHS.length) | 0];
-        ctx.fillStyle = HEAD;
-        ctx.fillText(ch, i * CELL, y);
-        // One dimmer glyph behind the head gives depth for one extra draw.
-        ctx.fillStyle = BODY;
-        ctx.fillText(GLYPHS[(Math.random() * GLYPHS.length) | 0], i * CELL, y - CELL);
+      for (let c = 0; c < cols.length; c += 1) {
+        const col = cols[c];
+        col.acc += col.speed;
+        while (col.acc >= 1) {
+          col.acc -= 1;
+          col.head += 1;
+          // Characters already on screen keep flickering.
+          col.chars[((col.head % col.chars.length) + col.chars.length) % col.chars.length] = glyph();
+        }
 
-        drops[i] += 1;
-        if (y > dims.h && Math.random() > 0.975) drops[i] = 0;
+        const x = c * CELL_W;
+        for (let i = 0; i < col.len; i += 1) {
+          const row = Math.floor(col.head) - i;
+          if (row < 0 || row >= rowCount) continue;
+          const ch = col.chars[row % col.chars.length];
+
+          if (i === 0) ctx.fillStyle = HEAD;
+          else if (i === 1) ctx.fillStyle = BRIGHT;
+          else if (i < col.len * 0.45) ctx.fillStyle = BODY;
+          else ctx.fillStyle = TAIL;
+
+          ctx.fillText(ch, x, row * CELL_H);
+        }
+
+        if (col.head - col.len > rowCount) cols[c] = newColumn(rowCount, false);
       }
     };
 
@@ -61,8 +95,7 @@ export default function MatrixRain() {
     ro.observe(host);
 
     if (!q.matrixFps) {
-      // Quality off: draw a single frame so the pane isn't blank, then idle.
-      for (let i = 0; i < 30; i += 1) frame();
+      frame();
       return () => ro.disconnect();
     }
 

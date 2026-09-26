@@ -51,9 +51,13 @@ export const useWM = create((set, get) => ({
   qualityPinned: false,
   fps: 60,
 
+  // The CRT treatment is pure CSS paint, so it stays on even at low quality.
+  crt: true,
+
   setViewport: (viewport) => set({ viewport }),
   toggleHelp: () => set((s) => ({ helpOpen: !s.helpOpen })),
   setFps: (fps) => set({ fps }),
+  toggleCrt: () => set((s) => ({ crt: !s.crt })),
   setQuality: (quality, byUser = true) =>
     set((s) => (s.qualityPinned && !byUser ? s : { quality, qualityPinned: s.qualityPinned || byUser })),
 

@@ -1,31 +1,11 @@
 import { useEffect, useRef } from "react";
 import { useWM } from "../wmStore";
 import { subscribe, QUALITY, canvasSize } from "../raf";
+import { createAquarium } from "../aquarium/engine";
 
-// Fish are drawn line by line, so each sprite is stored as its rows plus the
-// mirrored rows for the other swim direction.
-const FISH = [
-  { r: ["   \\", "><_'>", "   /"], l: ["/   ", "<'_><", "\\   "], c: "#e8b04b" },
-  { r: ["><(((º>"], l: ["<º)))><"], c: "#57d98a" },
-  { r: ["  \\", ">=)'>", "  /"], l: ["/  ", "<'(=<", "\\  "], c: "#7aa2f7" },
-  { r: ["><>"], l: ["<><"], c: "#bb9af7" },
-  { r: [" _", "><_>"], l: ["_ ", "<_><"], c: "#7dcfff" },
-];
-
-const CELL_W = 7.2;
-const CELL_H = 13;
-
-function spawn(w, h, i) {
-  const dir = Math.random() < 0.5 ? 1 : -1;
-  const kind = FISH[i % FISH.length];
-  return {
-    kind,
-    dir,
-    x: dir > 0 ? -Math.random() * w : w + Math.random() * w,
-    y: 12 + Math.random() * Math.max(10, h - 48),
-    speed: (0.25 + Math.random() * 0.55) * dir,
-  };
-}
+// Cell metrics for the monospace grid the sprites are authored against.
+const FONT_PX = 11;
+const CELL_H = 12;
 
 export default function Asciiquarium() {
   const hostRef = useRef(null);
@@ -39,79 +19,28 @@ export default function Asciiquarium() {
 
     const ctx = canvas.getContext("2d", { alpha: false });
     const q = QUALITY[quality] ?? QUALITY.high;
+    let tank = null;
     let dims = { w: 0, h: 0, scale: 1 };
-    let fish = [];
-    let bubbles = [];
-    let weeds = [];
-    let t = 0;
+    let cellW = 6.6;
 
     const layout = () => {
       dims = canvasSize(canvas, host, q.dpr);
       ctx.setTransform(dims.scale, 0, 0, dims.scale, 0, 0);
-      ctx.font = `12px "JetBrains Mono", monospace`;
+      ctx.font = `${FONT_PX}px "JetBrains Mono", ui-monospace, monospace`;
       ctx.textBaseline = "top";
+      cellW = ctx.measureText("M").width || 6.6;
 
-      const count = Math.max(3, Math.round((dims.w / 150) * q.density));
-      fish = Array.from({ length: count }, (_, i) => spawn(dims.w, dims.h, i));
-      bubbles = Array.from({ length: Math.round(count * 1.5) }, () => ({
-        x: Math.random() * dims.w,
-        y: Math.random() * dims.h,
-        s: 0.3 + Math.random() * 0.7,
-      }));
-      weeds = Array.from({ length: Math.max(3, Math.round(dims.w / 90)) }, (_, i) => ({
-        x: 14 + i * 90 + Math.random() * 30,
-        h: 3 + Math.round(Math.random() * 4),
-        phase: Math.random() * Math.PI * 2,
-      }));
+      const cols = Math.max(20, Math.floor(dims.w / cellW));
+      const rows = Math.max(10, Math.floor(dims.h / CELL_H));
+      tank = createAquarium({ cols, rows, density: q.density });
     };
 
     const frame = () => {
-      t += 1;
-      ctx.fillStyle = "#0b1114";
+      if (!tank) return;
+      ctx.fillStyle = "#06111a";
       ctx.fillRect(0, 0, dims.w, dims.h);
-
-      // Seaweed, swaying on a sine so it costs one character per segment.
-      ctx.fillStyle = "#2f7d55";
-      for (const wd of weeds) {
-        for (let s = 0; s < wd.h; s += 1) {
-          const sway = Math.sin(t * 0.06 + wd.phase + s * 0.5) * 3;
-          ctx.fillText(s % 2 ? ")" : "(", wd.x + sway, dims.h - (s + 1) * CELL_H - 4);
-        }
-      }
-
-      ctx.fillStyle = "#3f6b7d";
-      for (const b of bubbles) {
-        ctx.fillText("°", b.x, b.y);
-        b.y -= b.s;
-        if (b.y < -CELL_H) {
-          b.y = dims.h + Math.random() * 20;
-          b.x = Math.random() * dims.w;
-        }
-      }
-
-      for (const f of fish) {
-        const rows = f.dir > 0 ? f.kind.r : f.kind.l;
-        ctx.fillStyle = f.kind.c;
-        for (let i = 0; i < rows.length; i += 1) {
-          ctx.fillText(rows[i], f.x, f.y + i * CELL_H);
-        }
-        f.x += f.speed;
-        const width = rows[0].length * CELL_W;
-        if (f.speed > 0 && f.x > dims.w + width) {
-          f.x = -width;
-          f.y = 12 + Math.random() * Math.max(10, dims.h - 48);
-        } else if (f.speed < 0 && f.x < -width) {
-          f.x = dims.w + width;
-          f.y = 12 + Math.random() * Math.max(10, dims.h - 48);
-        }
-      }
-
-      // Waterline last so it sits above everything.
-      ctx.fillStyle = "#3d6f86";
-      let line = "";
-      const chars = Math.ceil(dims.w / CELL_W);
-      for (let i = 0; i < chars; i += 1) line += i % 4 < 2 ? "~" : "^";
-      ctx.fillText(line, 0, 2);
+      tank.step();
+      tank.draw(ctx, cellW, CELL_H);
     };
 
     layout();
@@ -119,6 +48,8 @@ export default function Asciiquarium() {
     ro.observe(host);
 
     if (!q.fishFps) {
+      // Settle the tank so a frozen frame still looks populated.
+      for (let i = 0; i < 60; i += 1) tank.step();
       frame();
       return () => ro.disconnect();
     }

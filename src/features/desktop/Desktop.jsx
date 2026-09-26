@@ -57,6 +57,7 @@ export default function Desktop() {
   const focused = useWM((s) => s.focused);
   const viewport = useWM((s) => s.viewport);
   const helpOpen = useWM((s) => s.helpOpen);
+  const crt = useWM((s) => s.crt);
   const setViewport = useWM((s) => s.setViewport);
 
   // Lay out the opening screen once per mount.
@@ -179,7 +180,7 @@ export default function Desktop() {
   }
 
   return (
-    <div className="wm-root">
+    <div className={`wm-root${crt ? " is-crt" : ""}`}>
       <StatusBar />
       <div className="wm-stage" ref={stageRef}>
         <AnimatePresence>
@@ -196,6 +197,14 @@ export default function Desktop() {
             );
           })}
         </AnimatePresence>
+
+        {crt && (
+          <div className="wm-crt" aria-hidden="true">
+            <div className="wm-crt-lines" />
+            <div className="wm-crt-roll" />
+            <div className="wm-crt-glass" />
+          </div>
+        )}
 
         {!onWs.length && (
           <div className="wm-empty">

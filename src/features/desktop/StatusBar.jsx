@@ -28,6 +28,8 @@ export default function StatusBar() {
   const quality = useWM((s) => s.quality);
   const setQuality = useWM((s) => s.setQuality);
   const fps = useWM((s) => s.fps);
+  const crt = useWM((s) => s.crt);
+  const toggleCrt = useWM((s) => s.toggleCrt);
 
   const occupied = new Set(Object.values(windows).map((w) => w.workspace));
   const title = focused ? windows[focused]?.title : null;
@@ -77,6 +79,14 @@ export default function StatusBar() {
           title="Cycle animation quality for the cmatrix and aquarium panes"
         >
           fx:{quality}
+        </button>
+        <button
+          type="button"
+          className={`wm-tray-btn${crt ? " is-on" : ""}`}
+          onClick={toggleCrt}
+          title="Toggle the CRT treatment"
+        >
+          crt:{crt ? "on" : "off"}
         </button>
         <button type="button" className="wm-tray-btn" onClick={toggleHelp}>
           Alt+/ keys
