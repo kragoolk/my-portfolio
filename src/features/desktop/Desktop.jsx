@@ -58,6 +58,7 @@ export default function Desktop() {
   const viewport = useWM((s) => s.viewport);
   const helpOpen = useWM((s) => s.helpOpen);
   const crt = useWM((s) => s.crt);
+  const phosphor = useWM((s) => s.phosphor);
   const setViewport = useWM((s) => s.setViewport);
 
   // Lay out the opening screen once per mount.
@@ -180,7 +181,7 @@ export default function Desktop() {
   }
 
   return (
-    <div className={`wm-root${crt ? " is-crt" : ""}`}>
+    <div className={`wm-root${crt ? " is-crt" : ""}`} data-phosphor={phosphor}>
       <StatusBar />
       <div className="wm-stage" ref={stageRef}>
         <AnimatePresence>

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useWM } from "../wmStore";
 import { subscribe, QUALITY, canvasSize } from "../raf";
+import { phosphorOf } from "../phosphor";
 
 // cmatrix draws a character grid, not a blurred trail: each column runs at its
 // own speed with its own tail length, the leading cell is near-white, and
@@ -13,10 +14,9 @@ const GLYPHS =
 
 const CELL_W = 12;
 const CELL_H = 14;
-const HEAD = "#d6ffe4";
-const BRIGHT = "#8ef0b0";
-const BODY = "#33c46a";
-const TAIL = "#16663a";
+
+// The native green tube, used when no phosphor is selected.
+const GREEN = { bg: "#070b09", dark: "#16663a", mid: "#33c46a", base: "#8ef0b0", bright: "#d6ffe4" };
 
 const rand = (n) => Math.floor(Math.random() * n);
 const glyph = () => GLYPHS[rand(GLYPHS.length)];
@@ -25,6 +25,7 @@ export default function MatrixRain() {
   const hostRef = useRef(null);
   const canvasRef = useRef(null);
   const quality = useWM((s) => s.quality);
+  const phosphorName = useWM((s) => s.phosphor);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -33,6 +34,7 @@ export default function MatrixRain() {
 
     const ctx = canvas.getContext("2d", { alpha: false });
     const q = QUALITY[quality] ?? QUALITY.high;
+    const p = phosphorOf(phosphorName) ?? GREEN;
     let dims = { w: 0, h: 0, scale: 1 };
     let cols = [];
     let rowCount = 0;
@@ -52,6 +54,12 @@ export default function MatrixRain() {
       ctx.setTransform(dims.scale, 0, 0, dims.scale, 0, 0);
       ctx.font = `${CELL_H - 2}px "JetBrains Mono", ui-monospace, monospace`;
       ctx.textBaseline = "top";
+      if (q.bloom) {
+        ctx.shadowColor = p.glow ?? "rgba(80, 240, 140, 0.5)";
+        ctx.shadowBlur = q.bloom;
+      } else {
+        ctx.shadowBlur = 0;
+      }
 
       rowCount = Math.max(4, Math.floor(dims.h / CELL_H));
       const want = Math.max(1, Math.floor(dims.w / CELL_W));
@@ -59,8 +67,14 @@ export default function MatrixRain() {
     };
 
     const frame = () => {
-      ctx.fillStyle = "#070b09";
+      // Clear without a shadow, then switch it back on for the glyphs.
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = p.bg;
       ctx.fillRect(0, 0, dims.w, dims.h);
+      if (q.bloom) {
+        ctx.shadowColor = p.glow ?? "rgba(80, 240, 140, 0.5)";
+        ctx.shadowBlur = q.bloom;
+      }
 
       for (let c = 0; c < cols.length; c += 1) {
         const col = cols[c];
@@ -78,10 +92,10 @@ export default function MatrixRain() {
           if (row < 0 || row >= rowCount) continue;
           const ch = col.chars[row % col.chars.length];
 
-          if (i === 0) ctx.fillStyle = HEAD;
-          else if (i === 1) ctx.fillStyle = BRIGHT;
-          else if (i < col.len * 0.45) ctx.fillStyle = BODY;
-          else ctx.fillStyle = TAIL;
+          if (i === 0) ctx.fillStyle = p.bright;
+          else if (i === 1) ctx.fillStyle = p.base;
+          else if (i < col.len * 0.45) ctx.fillStyle = p.mid;
+          else ctx.fillStyle = p.dark;
 
           ctx.fillText(ch, x, row * CELL_H);
         }
@@ -104,7 +118,7 @@ export default function MatrixRain() {
       unsub();
       ro.disconnect();
     };
-  }, [quality]);
+  }, [quality, phosphorName]);
 
   return (
     <div className="wm-canvas-host" ref={hostRef}>

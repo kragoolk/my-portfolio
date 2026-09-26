@@ -83,9 +83,12 @@ export function getFps() {
 // Quality tiers. `dpr` is deliberately capped: these panes draw monospace
 // glyphs, which gain nothing from a 2x backing store but cost 4x to fill.
 export const QUALITY = {
-  high: { matrixFps: 20, fishFps: 10, dpr: 1, density: 1 },
-  low: { matrixFps: 10, fishFps: 6, dpr: 1, density: 0.6 },
-  off: { matrixFps: 0, fishFps: 0, dpr: 1, density: 1 },
+  // `bloom` is a canvas shadowBlur radius. It is genuinely expensive per
+  // glyph, so only the top tier pays for it; the automatic downgrade drops it
+  // first if the frame rate sags.
+  high: { matrixFps: 20, fishFps: 10, dpr: 1, density: 1, bloom: 5 },
+  low: { matrixFps: 10, fishFps: 6, dpr: 1, density: 0.6, bloom: 0 },
+  off: { matrixFps: 0, fishFps: 0, dpr: 1, density: 1, bloom: 0 },
 };
 
 export function canvasSize(canvas, host, dpr) {

@@ -30,6 +30,8 @@ export default function StatusBar() {
   const fps = useWM((s) => s.fps);
   const crt = useWM((s) => s.crt);
   const toggleCrt = useWM((s) => s.toggleCrt);
+  const phosphor = useWM((s) => s.phosphor);
+  const cyclePhosphor = useWM((s) => s.cyclePhosphor);
 
   const occupied = new Set(Object.values(windows).map((w) => w.workspace));
   const title = focused ? windows[focused]?.title : null;
@@ -79,6 +81,14 @@ export default function StatusBar() {
           title="Cycle animation quality for the cmatrix and aquarium panes"
         >
           fx:{quality}
+        </button>
+        <button
+          type="button"
+          className="wm-tray-btn"
+          onClick={cyclePhosphor}
+          title="Cycle the phosphor colour of the whole screen"
+        >
+          {phosphor}
         </button>
         <button
           type="button"

@@ -9,6 +9,7 @@
 // Most ASCII art by Joan Stark. See CREDITS.md.
 
 import sprites from "./sprites.json";
+import { tintPalette, tint } from "../phosphor";
 
 // Term::Animation colour codes. Lower case is the normal intensity, upper
 // case the bright variant.
@@ -54,7 +55,12 @@ function randomiseMask(mask) {
   return out;
 }
 
-export function makeSprite({ art, mask }, defaultColor = "#7fdfff", transparent = TRANSPARENT) {
+export function makeSprite(
+  { art, mask },
+  defaultColor = "#7fdfff",
+  transparent = TRANSPARENT,
+  palette = PALETTE
+) {
   const lines = splitLines(art);
   const maskLines = mask ? splitLines(randomiseMask(mask)) : [];
   return {
@@ -62,6 +68,7 @@ export function makeSprite({ art, mask }, defaultColor = "#7fdfff", transparent 
     maskLines,
     defaultColor,
     transparent,
+    palette,
     w: Math.max(0, ...lines.map((l) => l.length)),
     h: lines.length,
   };
@@ -69,7 +76,8 @@ export function makeSprite({ art, mask }, defaultColor = "#7fdfff", transparent 
 
 // Draw one sprite at a character cell position.
 function drawSprite(ctx, sprite, col, row, cw, ch) {
-  const { lines, maskLines, defaultColor, transparent } = sprite;
+  const { lines, maskLines, defaultColor, transparent, palette } = sprite;
+  const pal = palette ?? PALETTE;
   for (let y = 0; y < lines.length; y += 1) {
     const line = lines[y];
     const maskLine = maskLines[y] ?? "";
@@ -78,7 +86,7 @@ function drawSprite(ctx, sprite, col, row, cw, ch) {
       if (chr === transparent) continue;
       if (chr === " " && transparent === " ") continue;
       const code = maskLine[x];
-      ctx.fillStyle = (code && PALETTE[code]) || defaultColor;
+      ctx.fillStyle = (code && pal[code]) || defaultColor;
       ctx.fillText(chr, (col + x) * cw, (row + y) * ch);
     }
   }
@@ -87,7 +95,13 @@ function drawSprite(ctx, sprite, col, row, cw, ch) {
 const rand = (n) => Math.floor(Math.random() * n);
 const pick = (arr) => arr[rand(arr.length)];
 
-export function createAquarium({ cols, rows, density = 1 }) {
+export function createAquarium({ cols, rows, density = 1, phosphor = null }) {
+  // One palette per tank: every mask colour is mapped onto the phosphor
+  // ramp up front so the draw loop never recomputes a colour.
+  const P = tintPalette(PALETTE, phosphor);
+  const sprite = (art, color, transparent) =>
+    makeSprite(art, tint(color, phosphor), transparent, P);
+
   const entities = [];
   let tick = 0;
 
@@ -100,13 +114,13 @@ export function createAquarium({ cols, rows, density = 1 }) {
 
   const waterlineRows = sprites.waterline.map((seg) => {
     const repeat = Math.ceil(cols / Math.max(1, seg.length)) + 1;
-    return makeSprite({ art: seg.repeat(repeat), mask: "" }, PALETTE.c);
+    return sprite({ art: seg.repeat(repeat), mask: "" }, PALETTE.c);
   });
   waterlineRows.forEach((s, i) =>
     add({ kind: "waterline", sprite: s, col: 0, row: 5 + i, depth: DEPTH.waterline })
   );
 
-  const castle = makeSprite(sprites.castle, PALETTE.K);
+  const castle = sprite(sprites.castle, PALETTE.K);
   add({
     kind: "castle",
     sprite: castle,
@@ -125,7 +139,7 @@ export function createAquarium({ cols, rows, density = 1 }) {
     }
     return add({
       kind: "seaweed",
-      frames: frames.map((f) => makeSprite({ art: f, mask: "" }, PALETTE.g)),
+      frames: frames.map((f) => sprite({ art: f, mask: "" }, PALETTE.g)),
       col: rand(Math.max(1, cols - 2)) + 1,
       row: rows - height,
       depth: DEPTH.seaweed,
@@ -146,13 +160,13 @@ export function createAquarium({ cols, rows, density = 1 }) {
     // Sprites come in direction pairs: even index swims right, odd left.
     const idx = rand(FISH.length >> 1) * 2;
     const dir = rand(2); // 0 right, 1 left
-    const sprite = makeSprite(FISH[idx + dir], PALETTE.C);
+    const body = sprite(FISH[idx + dir], PALETTE.C);
     const speed = (0.25 + Math.random() * 1.75) * (dir === 0 ? 1 : -1);
     return add({
       kind: "fish",
-      sprite,
-      col: dir === 0 ? -sprite.w : cols,
-      row: 9 + rand(Math.max(1, rows - sprite.h - 10)),
+      sprite: body,
+      col: dir === 0 ? -body.w : cols,
+      row: 9 + rand(Math.max(1, rows - body.h - 10)),
       depth: DEPTH.fishStart + rand(DEPTH.fishEnd - DEPTH.fishStart),
       speed,
       bubbleAt: rand(200) + 100,
@@ -174,7 +188,7 @@ export function createAquarium({ cols, rows, density = 1 }) {
     add({
       kind: "bubble",
       frames: [".", "o", "O", "O", "O"].map((c) =>
-        makeSprite({ art: c, mask: "" }, PALETTE.C)
+        sprite({ art: c, mask: "" }, PALETTE.C)
       ),
       col: mouth,
       row: fish.row + (fish.sprite.h >> 1),
@@ -218,7 +232,7 @@ export function createAquarium({ cols, rows, density = 1 }) {
     // Animated creatures hold several frames per direction; the rest hold one.
     const perDir = spec.frames.length / 2;
     const frameFor = (i) =>
-      makeSprite(spec.frames[dir * perDir + (i % perDir)], spec.color);
+      sprite(spec.frames[dir * perDir + (i % perDir)], spec.color);
     const frames = Array.from({ length: perDir }, (_, i) => frameFor(i));
     const w = Math.max(...frames.map((f) => f.w));
     const speed = spec.speed * (dir === 0 ? 1 : -1);

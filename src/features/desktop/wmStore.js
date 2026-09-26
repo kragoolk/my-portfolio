@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { PHOSPHOR_ORDER } from "./phosphor";
 
 export const WORKSPACES = [1, 2, 3, 4, 5];
 
@@ -54,10 +55,19 @@ export const useWM = create((set, get) => ({
   // The CRT treatment is pure CSS paint, so it stays on even at low quality.
   crt: true,
 
+  // Which phosphor the whole desktop is drawn in. "color" keeps each pane's
+  // own palette; the others make the screen monochrome, the way a real amber
+  // or green tube is.
+  phosphor: "amber",
+
   setViewport: (viewport) => set({ viewport }),
   toggleHelp: () => set((s) => ({ helpOpen: !s.helpOpen })),
   setFps: (fps) => set({ fps }),
   toggleCrt: () => set((s) => ({ crt: !s.crt })),
+  cyclePhosphor: () =>
+    set((s) => ({
+      phosphor: PHOSPHOR_ORDER[(PHOSPHOR_ORDER.indexOf(s.phosphor) + 1) % PHOSPHOR_ORDER.length],
+    })),
   setQuality: (quality, byUser = true) =>
     set((s) => (s.qualityPinned && !byUser ? s : { quality, qualityPinned: s.qualityPinned || byUser })),
 
