@@ -1,15 +1,15 @@
 // src/App.jsx
 import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
-import Hub from "./pages/Hub";
+import Hub from "./features/hub/Hub";
 
 // Lazy-loaded: keeps the heavy three.js/r3f/drei bundle, and the
 // react-markdown/highlight.js bundle, off the hub's initial load. Only
 // fetched when a visitor actually opens /gallery or a write-up.
-const Gallery = lazy(() => import("./pages/Gallery"));
-const Desktop = lazy(() => import("./desktop/Desktop"));
-const WriteupsIndex = lazy(() => import("./pages/WriteupsIndex"));
-const WriteupPage = lazy(() => import("./pages/WriteupPage"));
+const Gallery = lazy(() => import("./features/gallery/Gallery"));
+const Desktop = lazy(() => import("./features/desktop/Desktop"));
+const WriteupsIndex = lazy(() => import("./features/writeups/WriteupsIndex"));
+const WriteupPage = lazy(() => import("./features/writeups/WriteupPage"));
 
 export default function App() {
   return (
