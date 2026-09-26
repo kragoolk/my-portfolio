@@ -4,11 +4,30 @@ export const WORKSPACES = [1, 2, 3, 4, 5];
 
 // Registry of what can live in a window. `initial` is the geometry used when
 // a window is floating; tiled windows get their rect from layout.js.
+// `command` marks a pane that shows one command's frozen output until clicked.
 export const APPS = {
   terminal: { title: "~", chrome: "kitty", initial: { w: 720, h: 420 } },
   about: { title: "about.md", chrome: "nvim", initial: { w: 620, h: 480 } },
   experience: { title: "experience.log", chrome: "nvim", initial: { w: 680, h: 520 } },
+  neofetch: { title: "~", chrome: "kitty", command: "neofetch", initial: { w: 640, h: 400 } },
+  help: { title: "~", chrome: "kitty", command: "help", initial: { w: 640, h: 470 } },
+  matrix: { title: "cmatrix", chrome: "kitty", initial: { w: 420, h: 470 } },
+  aquarium: { title: "asciiquarium", chrome: "kitty", initial: { w: 820, h: 360 } },
+  writeup: { title: "latest.jpg", chrome: "imv", initial: { w: 420, h: 470 } },
 };
+
+// The panes the desktop opens with, and which boot slot each one fills.
+const BOOT = [
+  ["neofetch", "nf"],
+  ["help", "help"],
+  ["matrix", "matrix"],
+  ["writeup", "writeup"],
+  ["aquarium", "aquarium"],
+];
+
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 let seq = 0;
 const nextId = () => `win-${++seq}`;
@@ -21,8 +40,28 @@ export const useWM = create((set, get) => ({
   viewport: { w: 1280, h: 720 },
   helpOpen: false,
 
+  // "boot" uses the curated opening arrangement; the first time the visitor
+  // opens, closes or floats anything we hand the workspace back to dwindle.
+  layoutMode: "boot",
+
+  // high | low | off. Reduced-motion visitors start with the canvas panes
+  // frozen. `qualityPinned` records that a human chose, so the automatic
+  // downgrade never overrides them.
+  quality: prefersReducedMotion() ? "off" : "high",
+  qualityPinned: false,
+  fps: 60,
+
   setViewport: (viewport) => set({ viewport }),
   toggleHelp: () => set((s) => ({ helpOpen: !s.helpOpen })),
+  setFps: (fps) => set({ fps }),
+  setQuality: (quality, byUser = true) =>
+    set((s) => (s.qualityPinned && !byUser ? s : { quality, qualityPinned: s.qualityPinned || byUser })),
+
+  boot: () => {
+    if (get().order.length) return;
+    BOOT.forEach(([app, slot]) => get().open(app, { slot, boot: true }));
+    set({ layoutMode: "boot", focused: null });
+  },
 
   open: (app, opts = {}) => {
     const spec = APPS[app];
@@ -35,6 +74,7 @@ export const useWM = create((set, get) => ({
     const win = {
       id,
       app,
+      slot: opts.slot ?? null,
       title: opts.title ?? spec.title,
       workspace: opts.workspace ?? workspace,
       floating: opts.floating ?? false,
@@ -50,6 +90,7 @@ export const useWM = create((set, get) => ({
       windows: { ...s.windows, [id]: win },
       order: [...s.order, id],
       focused: id,
+      layoutMode: opts.boot ? s.layoutMode : "dwindle",
     }));
     return id;
   },
@@ -65,7 +106,7 @@ export const useWM = create((set, get) => ({
         const sameWs = order.filter((w) => windows[w].workspace === s.workspace);
         focused = sameWs.length ? sameWs[sameWs.length - 1] : null;
       }
-      return { windows, order, focused };
+      return { windows, order, focused, layoutMode: "dwindle" };
     }),
 
   focus: (id) =>
@@ -99,6 +140,7 @@ export const useWM = create((set, get) => ({
       return {
         windows: { ...s.windows, [id]: { ...win, floating: !win.floating } },
         order: [...s.order.filter((w) => w !== id), id],
+        layoutMode: "dwindle",
       };
     }),
 

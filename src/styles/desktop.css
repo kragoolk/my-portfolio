@@ -312,3 +312,132 @@
 @media (prefers-reduced-motion: reduce) {
   .wm-win { transition: none !important; }
 }
+
+/* --- static (pre-rendered) terminal panes ------------------------------- */
+
+.wm-static { position: relative; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+.wm-static-out {
+  margin: 0;
+  padding: 10px 12px;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--wm-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--wm-text);
+  white-space: pre;
+}
+.wm-static-line { display: block; }
+.wm-static-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 13px;
+  background: var(--wm-amber);
+  vertical-align: text-bottom;
+  animation: wm-blink 1.1s step-end infinite;
+}
+@keyframes wm-blink { 50% { opacity: 0; } }
+
+/* Full-pane hit target: the pane becomes a real terminal when clicked. */
+.wm-static-hit {
+  position: absolute;
+  inset: 0;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: text;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+.wm-static-hint {
+  opacity: 0;
+  margin: 10px;
+  padding: 4px 9px;
+  font-family: var(--wm-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wm-amber);
+  border: 1px solid rgba(232, 176, 75, 0.35);
+  background: rgba(13, 15, 17, 0.9);
+  transition: opacity 0.15s ease;
+}
+.wm-static-hit:hover .wm-static-hint,
+.wm-static-hit:focus-visible .wm-static-hint { opacity: 1; }
+
+/* --- canvas panes ------------------------------------------------------- */
+
+.wm-canvas-host { flex: 1 1 auto; min-width: 0; position: relative; overflow: hidden; }
+.wm-canvas-host canvas { display: block; }
+
+/* --- write-up card ------------------------------------------------------ */
+
+.wm-card {
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+  display: block;
+  text-decoration: none;
+  overflow: hidden;
+}
+.wm-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.85) contrast(1.05);
+  transition: transform 0.35s ease, filter 0.35s ease;
+}
+.wm-card:hover .wm-card-img { transform: scale(1.04); filter: saturate(1) contrast(1.08); }
+.wm-card-meta {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 16px 16px 14px;
+  background: linear-gradient(to top, rgba(8, 9, 10, 0.96) 55%, rgba(8, 9, 10, 0));
+}
+.wm-card-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wm-amber);
+}
+.wm-card-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--wm-green);
+  box-shadow: 0 0 6px rgba(87, 217, 138, 0.7);
+}
+.wm-card-date { margin-left: auto; color: var(--wm-faint); letter-spacing: 0.1em; }
+.wm-card-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--wm-text);
+}
+.wm-card-tags { margin: 0; font-size: 10px; color: var(--wm-dim); letter-spacing: 0.04em; }
+.wm-card-cta {
+  margin: 10px 0 0;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wm-amber);
+}
+
+/* --- status bar: fps + quality ------------------------------------------ */
+
+.wm-fps { color: var(--wm-faint); font-variant-numeric: tabular-nums; }
+.wm-fps.is-low { color: #e8685b; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wm-static-cursor { animation: none; }
+  .wm-card-img { transition: none; }
+  .wm-card:hover .wm-card-img { transform: none; }
+}

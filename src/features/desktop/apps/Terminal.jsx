@@ -28,7 +28,7 @@ const BANNER = [
   "",
 ];
 
-export default function Terminal({ winId, focused }) {
+export default function Terminal({ winId, focused, initialCommand }) {
   const hostRef = useRef(null);
   const termRef = useRef(null);
   const navigate = useNavigate();
@@ -72,6 +72,17 @@ export default function Terminal({ winId, focused }) {
     };
 
     BANNER.forEach((l) => term.writeln(l));
+
+    // Replay the pane's command so upgrading a static pane to a live terminal
+    // looks continuous rather than wiping what was on screen.
+    if (initialCommand) {
+      term.write(PROMPT(cwd) + initialCommand + "\r\n");
+      const boot = run(initialCommand, cwd);
+      cwd = boot.cwd;
+      boot.lines.forEach((l) => term.writeln(l));
+      history.unshift(initialCommand);
+    }
+
     term.write(PROMPT(cwd));
 
     const submit = () => {
@@ -185,7 +196,7 @@ export default function Terminal({ winId, focused }) {
       term.dispose();
       termRef.current = null;
     };
-  }, [winId, openApp, closeWin, navigate]);
+  }, [winId, openApp, closeWin, navigate, initialCommand]);
 
   useEffect(() => {
     if (focused) termRef.current?.focus();

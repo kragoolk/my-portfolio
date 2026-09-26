@@ -25,8 +25,13 @@ export default function StatusBar() {
   const windows = useWM((s) => s.windows);
   const focused = useWM((s) => s.focused);
 
+  const quality = useWM((s) => s.quality);
+  const setQuality = useWM((s) => s.setQuality);
+  const fps = useWM((s) => s.fps);
+
   const occupied = new Set(Object.values(windows).map((w) => w.workspace));
   const title = focused ? windows[focused]?.title : null;
+  const nextQuality = quality === "high" ? "low" : quality === "low" ? "off" : "high";
 
   return (
     <header className="wm-bar">
@@ -59,6 +64,20 @@ export default function StatusBar() {
       </div>
 
       <div className="wm-bar-right">
+        <span
+          className={`wm-fps${fps < 38 ? " is-low" : ""}`}
+          title="Frames per second of the shared animation loop"
+        >
+          {fps} fps
+        </span>
+        <button
+          type="button"
+          className="wm-tray-btn"
+          onClick={() => setQuality(nextQuality)}
+          title="Cycle animation quality for the cmatrix and aquarium panes"
+        >
+          fx:{quality}
+        </button>
         <button type="button" className="wm-tray-btn" onClick={toggleHelp}>
           Alt+/ keys
         </button>

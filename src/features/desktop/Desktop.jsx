@@ -1,12 +1,17 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
-import { useWM, WORKSPACES } from "./wmStore";
-import { computeTiles, OUTER } from "./layout";
+import { useWM, WORKSPACES, APPS } from "./wmStore";
+import { computeTiles, bootTiles, OUTER } from "./layout";
+import { onFps } from "./raf";
 import StatusBar from "./StatusBar";
 import Window from "./Window";
 import Terminal from "./apps/Terminal";
 import Reader from "./apps/Reader";
+import StaticTerm from "./apps/StaticTerm";
+import MatrixRain from "./apps/MatrixRain";
+import Asciiquarium from "./apps/Asciiquarium";
+import WriteupCard from "./apps/WriteupCard";
 import "../../styles/desktop.css";
 
 const MIN_WIDTH = 860;
@@ -23,8 +28,21 @@ const KEYS = [
 ];
 
 function AppBody({ win, focused }) {
-  if (win.app === "terminal") return <Terminal winId={win.id} focused={focused} />;
-  return <Reader app={win.app} />;
+  switch (win.app) {
+    case "terminal":
+      return <Terminal winId={win.id} focused={focused} />;
+    case "matrix":
+      return <MatrixRain />;
+    case "aquarium":
+      return <Asciiquarium />;
+    case "writeup":
+      return <WriteupCard />;
+    default: {
+      const command = APPS[win.app]?.command;
+      if (command) return <StaticTerm winId={win.id} focused={focused} command={command} />;
+      return <Reader app={win.app} />;
+    }
+  }
 }
 
 export default function Desktop() {
@@ -41,12 +59,30 @@ export default function Desktop() {
   const helpOpen = useWM((s) => s.helpOpen);
   const setViewport = useWM((s) => s.setViewport);
 
-  // Open a terminal on first load so the desktop is never empty.
+  // Lay out the opening screen once per mount.
   const booted = useRef(false);
   useEffect(() => {
     if (booted.current) return;
     booted.current = true;
-    if (!useWM.getState().order.length) useWM.getState().open("terminal");
+    useWM.getState().boot();
+  }, []);
+
+  // Watch the shared animation loop and step quality down if the machine
+  // can't hold a reasonable frame rate. Only ever downgrades, only once, and
+  // never overrides a choice the visitor made in the status bar.
+  useEffect(() => {
+    let slow = 0;
+    return onFps((measured) => {
+      useWM.getState().setFps(measured);
+      const wm = useWM.getState();
+      if (wm.qualityPinned || wm.quality === "off") return;
+      if (measured < 38) {
+        slow += 1;
+        if (slow >= 3) wm.setQuality(wm.quality === "high" ? "low" : "off", false);
+      } else {
+        slow = 0;
+      }
+    });
   }, []);
 
   useLayoutEffect(() => {
@@ -110,10 +146,15 @@ export default function Desktop() {
     [order, windows, workspace]
   );
 
+  const layoutMode = useWM((s) => s.layoutMode);
+  const useBoot = layoutMode === "boot" && onWs.length > 0 && onWs.every((w) => w.slot);
+  const bootRects = useMemo(() => bootTiles(viewport), [viewport]);
+
   const tiles = useMemo(() => {
+    if (useBoot) return {};
     const tiled = onWs.filter((w) => !w.floating && !w.maximized).map((w) => w.id);
     return computeTiles(viewport, tiled);
-  }, [onWs, viewport]);
+  }, [onWs, viewport, useBoot]);
 
   const maxRect = {
     x: OUTER,
@@ -147,7 +188,7 @@ export default function Desktop() {
               ? maxRect
               : win.floating
                 ? win.geom
-                : (tiles[win.id] ?? maxRect);
+                : ((useBoot ? bootRects[win.slot] : tiles[win.id]) ?? maxRect);
             return (
               <Window key={win.id} win={win} rect={rect} focused={win.id === focused}>
                 <AppBody win={win} focused={win.id === focused} />
