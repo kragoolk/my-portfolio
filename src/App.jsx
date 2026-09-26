@@ -7,6 +7,7 @@ import Hub from "./pages/Hub";
 // react-markdown/highlight.js bundle, off the hub's initial load. Only
 // fetched when a visitor actually opens /gallery or a write-up.
 const Gallery = lazy(() => import("./pages/Gallery"));
+const Desktop = lazy(() => import("./desktop/Desktop"));
 const WriteupsIndex = lazy(() => import("./pages/WriteupsIndex"));
 const WriteupPage = lazy(() => import("./pages/WriteupPage"));
 
@@ -19,6 +20,14 @@ export default function App() {
         element={
           <Suspense fallback={null}>
             <Gallery />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/desktop"
+        element={
+          <Suspense fallback={null}>
+            <Desktop />
           </Suspense>
         }
       />
