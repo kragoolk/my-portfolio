@@ -13,7 +13,7 @@ export default function WriteupsIndex() {
         <h1 className="hub-heading">Investigations & analysis</h1>
         <p className="hub-lede" style={{ marginBottom: 40 }}>
           Forensic write-ups from my cybersecurity coursework and personal
-          projects — packet captures, compromised hosts, and the reasoning
+          projects: packet captures, compromised hosts, and the reasoning
           behind each conclusion.
         </p>
         <div className="hub-index-list">

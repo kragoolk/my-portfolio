@@ -9,10 +9,11 @@ export default function Hero() {
           <h1>Oliver Krauss</h1>
           <p className="hub-hero-tagline">cybersecurity analyst</p>
           <p className="hub-hero-bio">
-            BBA in Cybersecurity from UTSA with enterprise SOC experience
-            across Microsoft Defender, Splunk, and ExtraHop. My focus is
-            network forensics and incident response: finding the root
-            cause behind a compromise, not just the symptoms.
+            BBA in Cybersecurity from UTSA, with enterprise SOC experience
+            across Microsoft Defender, Splunk, and ExtraHop. I work
+            backwards from evidence to root cause in packet captures, on
+            disk, or in the wiring, then write it up so someone without a
+            security background can act on it.
           </p>
           <div className="hub-hero-ctas">
             <a

@@ -38,7 +38,7 @@ function TouchNotice() {
         <p className="hub-lede" style={{ margin: "0 auto 28px" }}>
           This space is flown with a keyboard (WASD) and mouse-look, which
           doesn't translate to touch. Pull it up on a laptop or desktop to
-          explore it — in the meantime, here's the rest of the portfolio.
+          explore it. In the meantime, here's the rest of the portfolio.
         </p>
         <Link to="/" className="hub-btn hub-btn--primary">
           ← Back to portfolio

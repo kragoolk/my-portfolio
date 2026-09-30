@@ -62,6 +62,12 @@
   line-height: 1.75;
   max-width: 70ch;
 }
+/* The CSS reset zeroes paragraph margins, so consecutive ledes would other-
+   wise run together as one block. Scoped to adjacent siblings, since the
+   single-paragraph uses elsewhere set their own spacing. */
+.hub-lede + .hub-lede {
+  margin-top: 1.05em;
+}
 
 /* Scroll reveal */
 .reveal {
