@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-three/drei": "^10.7.4",
     "@react-three/fiber": "^9.3.0",
+    "@vercel/analytics": "^2.0.1",
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/xterm": "^6.0.0",
     "highlight.js": "^11.12.0",

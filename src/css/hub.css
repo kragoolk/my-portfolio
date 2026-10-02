@@ -502,3 +502,116 @@
     justify-content: flex-start;
   }
 }
+
+/* --- slim quick-links footer -------------------------------------------- */
+
+.hub-quicklinks {
+  border-top: 1px solid var(--hub-border);
+  background: var(--hub-bg);
+}
+.hub-quicklinks-inner {
+  max-width: var(--hub-max-width);
+  margin: 0 auto;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 0.8rem;
+}
+.hub-quicklinks-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+.hub-quicklinks-nav a {
+  color: var(--hub-text);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.hub-quicklinks-nav a:hover {
+  color: var(--hub-accent);
+}
+.hub-quicklinks-meta {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--hub-text-dim);
+}
+.hub-quicklinks-meta a {
+  color: var(--hub-text-dim);
+  text-decoration: none;
+}
+.hub-quicklinks-meta a:hover {
+  color: var(--hub-accent);
+}
+.hub-quicklinks-sep {
+  color: var(--hub-border-strong);
+}
+
+/* --- privacy policy ----------------------------------------------------- */
+
+.hub-policy-updated {
+  margin: 0 0 28px;
+  font-size: 0.78rem;
+  color: var(--hub-text-dim);
+}
+.hub-policy-h2 {
+  margin: 38px 0 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--hub-text);
+  letter-spacing: -0.01em;
+}
+.hub-policy-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: 70ch;
+}
+.hub-policy-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 12px;
+  color: var(--hub-text-dim);
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+.hub-policy-list li::before {
+  content: "\2022";
+  position: absolute;
+  left: 2px;
+  color: var(--hub-accent);
+}
+.hub-policy-link {
+  color: var(--hub-accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 180, 84, 0.35);
+}
+.hub-policy-link:hover {
+  border-bottom-color: var(--hub-accent);
+}
+.hub-policy-back {
+  margin-top: 48px;
+  font-size: 0.85rem;
+}
+.hub-policy-back a {
+  color: var(--hub-text-dim);
+  text-decoration: none;
+}
+.hub-policy-back a:hover {
+  color: var(--hub-accent);
+}
+.hub-policy-back a::before {
+  content: "\2190  ";
+  color: var(--hub-accent);
+}
+
+@media (max-width: 640px) {
+  .hub-quicklinks-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

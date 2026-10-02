@@ -7,6 +7,7 @@ import "../css/hub.css";
 import "../css/writeup.css";
 import NavBar from "../components/hub/NavBar";
 import ContactFooter from "../components/hub/ContactFooter";
+import SiteFooter from "../components/hub/SiteFooter";
 import { getWriteup } from "../content/writeups";
 
 export default function WriteupPage() {
@@ -51,6 +52,7 @@ export default function WriteupPage() {
         </div>
       </article>
       <ContactFooter />
+      <SiteFooter />
     </div>
   );
 }

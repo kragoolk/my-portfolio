@@ -7,6 +7,7 @@ import Education from "../components/hub/Education";
 import Projects from "../components/hub/Projects";
 import WriteupsShowcase from "../components/hub/WriteupsShowcase";
 import ContactFooter from "../components/hub/ContactFooter";
+import SiteFooter from "../components/hub/SiteFooter";
 
 export default function Hub() {
   return (
@@ -19,6 +20,7 @@ export default function Hub() {
       <Projects />
       <WriteupsShowcase />
       <ContactFooter />
+      <SiteFooter />
     </div>
   );
 }

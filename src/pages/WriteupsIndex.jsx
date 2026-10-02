@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import "../css/hub.css";
 import NavBar from "../components/hub/NavBar";
 import ContactFooter from "../components/hub/ContactFooter";
+import SiteFooter from "../components/hub/SiteFooter";
 import writeups from "../content/writeups";
 
 export default function WriteupsIndex() {
@@ -35,6 +36,7 @@ export default function WriteupsIndex() {
         </div>
       </section>
       <ContactFooter />
+      <SiteFooter />
     </div>
   );
 }
